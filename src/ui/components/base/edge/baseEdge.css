@@ -1,0 +1,17 @@
+.react-flow__edge-path.active {
+	stroke: #5954cb;
+	stroke-width: 4;
+	stroke-opacity: 1;
+}
+
+.react-flow__edge-path.was_active {
+	stroke: #5197a4;
+	stroke-width: 4;
+	stroke-opacity: 0.75;
+}
+
+.react-flow__edge-path {
+	stroke: #454545;
+	stroke-width: 4;
+	stroke-opacity: 0.2;
+}

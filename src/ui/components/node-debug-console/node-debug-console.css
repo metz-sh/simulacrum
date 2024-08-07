@@ -1,0 +1,24 @@
+.button {
+	background-color: black;
+	color: white;
+	border: 2px solid white;
+}
+
+.button:hover {
+	color: #113afc;
+	background-color: white;
+}
+
+.button:active {
+	color: #113afc;
+	background-color: white;
+}
+
+.handler {
+	margin-bottom: 20px;
+
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 10px;
+}

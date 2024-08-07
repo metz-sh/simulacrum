@@ -1,0 +1,31 @@
+.player_controls {
+	display: flex;
+	justify-content: center;
+}
+
+.player_control_bar button {
+	background-color: black;
+	color: white;
+	border: 1px solid white;
+	border-radius: 12px;
+}
+
+.player_control_bar button:hover {
+	color: #113afc;
+	background-color: white;
+}
+
+.player_control_bar button:active {
+	color: #113afc;
+	background-color: white;
+}
+
+.player_control_bar button:disabled {
+	background-color: slategray;
+	border: 2px solid white;
+}
+
+.editing {
+	color: #113afc !important;
+	background-color: white !important;
+}

@@ -1,0 +1,10 @@
+.text {
+	font-family: 'Fira Mono', Monospace !important;
+}
+
+.calling_dependency_subsection {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 10px;
+}

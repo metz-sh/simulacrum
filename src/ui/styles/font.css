@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@500&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+@font-face {
+	font-family: 'strawfordregular';
+	src: url('strawford-regular-webfont.eot');
+	src:
+		url('strawford-regular-webfont.eot?#iefix') format('embedded-opentype'),
+		url('strawford-regular-webfont.woff2') format('woff2'),
+		url('strawford-regular-webfont.woff') format('woff'),
+		url('strawford-regular-webfont.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'strawfordregular_italic';
+	src: url('strawford-regularitalic-webfont.eot');
+	src:
+		url('strawford-regularitalic-webfont.eot?#iefix') format('embedded-opentype'),
+		url('strawford-regularitalic-webfont.woff2') format('woff2'),
+		url('strawford-regularitalic-webfont.woff') format('woff'),
+		url('strawford-regularitalic-webfont.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'basier_circleregular';
+	src: url('basiercircle-regular-webfont.eot');
+	src:
+		url('basiercircle-regular-webfont.eot?#iefix') format('embedded-opentype'),
+		url('basiercircle-regular-webfont.woff2') format('woff2'),
+		url('basiercircle-regular-webfont.woff') format('woff'),
+		url('basiercircle-regular-webfont.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
