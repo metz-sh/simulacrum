@@ -151,8 +151,8 @@ export function createStandardLibrary(runtime: Runtime, projectName: string) {
 			return runtime.getCurrentTick();
 		},
 
-		createChannelEmitter(params: { slug: string; name: string }): ChannelEmitter {
-			return runtime.getEventManager().createChannelEmitter(params);
+		createChannelEmitter(slug: string): ChannelEmitter {
+			return runtime.getEventManager().createChannelEmitter(slug);
 		},
 
 		registerChannelListener(slug: string, listener: ChannelListener): () => void {

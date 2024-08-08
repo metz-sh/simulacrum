@@ -42,6 +42,10 @@ export type Keyword = {
 	flags: KeywordFlags;
 	filePath: string;
 	methods: ParsedMethod[];
+	channelEmitters: {
+		slug: string;
+		type: string | undefined;
+	}[];
 };
 export type Keywords = Keyword[];
 export type ClassyKeywords = (Keyword & { class: { new (): any } })[];

@@ -103,8 +103,8 @@ export function getGlobals(params: { constructorBased: string[]; injectableClass
 			*/
 			function log(message?: any, ...optionalParams: any[]): void
 
-			function createChannelEmitter<T>(params: { slug: string; name: string }): std.ChannelEmitter<T>;
-			function registerChannelListener(slug: string, flowFunction: std.FlowFunction<any, 'immediate'>): () => void;
+			function createChannelEmitter<T>(slug: string): std.ChannelEmitter<T>;
+			function registerChannelListener(slug: string, listener: (...args: any[]) => std.FlowExecutor<any, any>): () => void;
 		}
 	}
 	`;

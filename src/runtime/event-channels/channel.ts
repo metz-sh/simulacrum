@@ -1,5 +1,4 @@
 import { FlowExecutor } from '../flow-executor';
-import { Address } from '../heap';
 
 export type ChannelListener = (...args: any[]) => FlowExecutor;
 
@@ -7,11 +6,9 @@ export class Channel {
 	private receivers = new Set<ChannelListener>();
 
 	private slug: string;
-	private name: string;
 
-	constructor(slug: string, name: string) {
+	constructor(slug: string) {
 		this.slug = slug;
-		this.name = name;
 	}
 
 	onEmit(data: any) {
@@ -32,7 +29,6 @@ export class Channel {
 	getIdentity() {
 		return {
 			slug: this.slug,
-			name: this.name,
 		};
 	}
 }

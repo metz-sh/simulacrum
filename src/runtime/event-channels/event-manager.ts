@@ -4,12 +4,12 @@ import { ChannelEmitter } from './channel-emitter';
 export class EventManager {
 	private channelMap = new Map<string, Channel>();
 
-	createChannelEmitter(params: { slug: string; name: string }) {
-		if (this.channelMap.has(params.slug)) {
+	createChannelEmitter(slug: string) {
+		if (this.channelMap.has(slug)) {
 			throw new Error('Channel already exists!');
 		}
-		const channel = new Channel(params.slug, params.name);
-		this.channelMap.set(params.slug, channel);
+		const channel = new Channel(slug);
+		this.channelMap.set(slug, channel);
 
 		return new ChannelEmitter(channel);
 	}
