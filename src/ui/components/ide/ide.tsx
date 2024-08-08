@@ -82,13 +82,22 @@ export default function (props: { height?: string }) {
 		shallow
 	);
 
-	const { getActiveFilePath, editor, overlayed, monaco } = useIDE(
+	const {
+		getActiveFilePath,
+		editor,
+		overlayed,
+		monaco,
+		globalLibraryInitialized,
+		markGlobalLibraryInitialized,
+	} = useIDE(
 		(state) => ({
 			setActiveFilePath: state.setActiveFilePath,
 			getActiveFilePath: state.getActiveFilePath,
 			editor: state.editor,
 			overlayed: state.overlayed,
 			monaco: state.monaco,
+			globalLibraryInitialized: state.globalLibraryInitialized,
+			markGlobalLibraryInitialized: state.markGlobalLibraryInitialized,
 		}),
 		shallow
 	);
@@ -110,16 +119,19 @@ export default function (props: { height?: string }) {
 	}
 
 	useEffect(() => {
-		if (monaco._tag === 'None') {
+		if (monaco._tag === 'None' || globalLibraryInitialized) {
 			return;
 		}
-		addDefinitionsToMonaco([
+
+		addFilesToMonaco([
 			{
-				content: globalInterface,
-				filePath: 'globals.d.ts',
+				path: 'globals.d.ts',
+				value: globalInterface,
 			},
 		]);
-	}, [monaco]);
+
+		markGlobalLibraryInitialized();
+	}, [monaco, globalLibraryInitialized]);
 
 	useEffect(() => {
 		if (!isCompilerServiceReady) {

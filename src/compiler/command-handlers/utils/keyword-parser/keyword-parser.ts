@@ -194,7 +194,7 @@ export class KeywordParser {
 
 		const channelEmitters = result.map((r) => ({
 			slug: (r.arguments[0] as ts.StringLiteral).text,
-			type: r.typeArguments?.at(0)?.getFullText(),
+			type: r.typeArguments?.at(0)?.getFullText() || 'undefined',
 		}));
 
 		return channelEmitters;

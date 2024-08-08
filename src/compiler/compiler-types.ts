@@ -44,7 +44,7 @@ export type Keyword = {
 	methods: ParsedMethod[];
 	channelEmitters: {
 		slug: string;
-		type: string | undefined;
+		type: string;
 	}[];
 	typeParametersLength: number;
 };

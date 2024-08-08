@@ -1,6 +1,30 @@
 import { Keyword, Keywords } from '../compiler-types';
 import lodash from 'lodash';
 
+function getChannelSlugTypeMapping(keywords: Keywords) {
+	const slugTypeTuples = keywords
+		.filter((kw) => kw.channelEmitters.length > 0)
+		.flatMap((kw) => kw.channelEmitters.map((ce) => [ce.slug, ce.type] as const));
+
+	const slugTypeMap = new Map(slugTypeTuples);
+	const allSlugs = Array.from(slugTypeMap, ([slug]) => `'${slug}'`);
+
+	const allSlugsType = `type AllChannelSlugs = ${allSlugs.length ? allSlugs.join(' | ') : 'never'}`;
+	const types = Array.from(slugTypeMap, ([slug, type]) => `Slug extends '${slug}' ? ${type}\n`);
+	if (types.length) {
+		types.push('never');
+	}
+
+	const typeMapping = types.length ? types.join(' : ') : 'never';
+
+	const finalType = `
+		${allSlugsType}
+		type ChannelSlugTypeMap<Slug extends AllChannelSlugs> = ${typeMapping}
+	`;
+
+	return finalType;
+}
+
 function getClassNames(keywords: Keywords) {
 	const [constructorBased, injectables] = lodash.partition(
 		keywords,
@@ -58,24 +82,12 @@ export function getGlobals(keywords: Keywords) {
 	return `
 		${getBaseTypes(keywords)}
 
+		${getChannelSlugTypeMapping(keywords)}
+
 		/**
 		 * Globally available helper module
 		*/
 		declare module std {
-			class FlowExecutor<RT, M> {
-			 run(): void;
-			 await(): RT;
-			}
-			class ChannelEmitter<T> {
-				emit(data: T): void;
-			}
-
-			type ScheduledFlow = { flow_type: 'scheduled_flow' }
-			type FlowFunction<T extends (...args: any) => any, Schedule> = (Schedule extends Record<any, any> ? ((...params: Parameters<T>) => ScheduledFlow) : ((...params: Parameters<T>) => std.FlowExecutor<ReturnType<T>, T>)) & { readonly __tag: unique symbol }
-			type FlowGenerator<T, Schedule> = {
-				[key in keyof T]: T[key] extends ((...args: any) => any) ? std.FlowFunction<T[key], Schedule> : never;
-			}
-
 			/**
 			 * Resolve an instance of a class as long it's injectable.
 			 * @param service
@@ -86,22 +98,6 @@ export function getGlobals(keywords: Keywords) {
 			): T
 
 			/**
-			 * Halts the flow for specified number of ticks
-			 * @param ticks Number of ticks to halt for
-			 * @link https://metz.sh
-			*/
-			function sleep(
-				ticks: number
-			): void
-
-			/**
-			 * Gets the current tick of runtime. Equivalent of getting current time.
-			 * @link https://metz.sh
-			*/
-			function currentTick(): number
-
-
-			/**
 			 * Creates a new flow for given class and method
 			 * @param name Name of the flow
 			 * @param name Object of class this flow is for
@@ -110,22 +106,7 @@ export function getGlobals(keywords: Keywords) {
 			*/
 			function flow<T extends AllClasses, Schedule extends { after: number } | { every: number } | 'immediate' = 'immediate'>(name: string, classInstance: T, schedule: Schedule = 'immediate'): std.FlowGenerator<T, Schedule>
 
-			function awaitAll<T extends FlowExecutor<any, any>[]>(
-				flows: [...T]
-			): { [K in keyof T]: T[K] extends FlowExecutor<infer RT, any> ? RT : never }
-
-			function awaitRace<T extends FlowExecutor<any, any>[]>(
-				flows: [...T]
-			): T[number] extends FlowExecutor<infer RT, any> ? RT : never
-
-			/**
-			 * Logs messages on playground
-			 * @link https://metz.sh
-			*/
-			function log(message?: any, ...optionalParams: any[]): void
-
-			function createChannelEmitter<T>(slug: string): std.ChannelEmitter<T>;
-			function registerChannelListener(slug: string, listener: (...args: any[]) => std.FlowExecutor<any, any>): () => void;
+			function registerChannelListener<Slug extends AllChannelSlugs>(slug: Slug, listener: (data: ChannelSlugTypeMap<Slug>) => std.FlowExecutor<any, any>): () => void;
 		}
 	`;
 }
