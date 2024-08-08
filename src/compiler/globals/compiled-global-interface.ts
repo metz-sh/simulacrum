@@ -1,28 +1,51 @@
-function getInjectableClasses(params: { injectableClassNames: string[] }) {
-	if (!params.injectableClassNames.length) {
+import { Keyword, Keywords } from '../compiler-types';
+import lodash from 'lodash';
+
+function getClassNames(keywords: Keywords) {
+	const [constructorBased, injectables] = lodash.partition(
+		keywords,
+		(_) => _.flags.isConstructorBased
+	);
+	return {
+		constructorBased,
+		injectables,
+	};
+}
+
+function createTypeFromKeyword(keyword: Keyword) {
+	const typeParameters = keyword.typeParametersLength
+		? `<${Array(keyword.typeParametersLength).fill('unknown')}>`
+		: '';
+
+	return `${keyword.className}${typeParameters}`;
+}
+
+function getInjectableClasses(params: { injectables: Keywords }) {
+	if (!params.injectables.length) {
 		return `
 		type InjectableClasses = never;
 		`;
 	}
-	return `type InjectableClasses = ${params.injectableClassNames.join(' | ')}`;
+	return `type InjectableClasses = ${params.injectables.map(createTypeFromKeyword).join(' | ')}`;
 }
 
-function getAllClasses(params: { constructorBased: string[]; injectableClassNames: string[] }) {
-	const allClasses = [...params.constructorBased, ...params.injectableClassNames];
+function getAllClasses(params: { constructorBased: Keywords; injectables: Keywords }) {
+	const allClasses = [...params.constructorBased, ...params.injectables];
 	if (!allClasses.length) {
 		return `
 		type AllClasses = never;
 		`;
 	}
-	return `type AllClasses = ${allClasses.join(' | ')}`;
+	return `type AllClasses = ${allClasses.map(createTypeFromKeyword).join(' | ')}`;
 }
 
-function getBaseTypes(params: { constructorBased: string[]; injectableClassNames: string[] }) {
+function getBaseTypes(keywords: Keywords) {
+	const classes = getClassNames(keywords);
 	const injectableClasses = getInjectableClasses({
-		injectableClassNames: params.injectableClassNames,
+		injectables: classes.injectables,
 	});
 
-	const allClasses = getAllClasses(params);
+	const allClasses = getAllClasses(classes);
 
 	return `
 	type Constructor<X> = {new (): X}
@@ -31,21 +54,19 @@ function getBaseTypes(params: { constructorBased: string[]; injectableClassNames
 	`;
 }
 
-export function getGlobals(params: { constructorBased: string[]; injectableClassNames: string[] }) {
+export function getGlobals(keywords: Keywords) {
 	return `
-
-	interface Window {
-		${getBaseTypes(params)}
+		${getBaseTypes(keywords)}
 
 		/**
 		 * Globally available helper module
 		*/
 		declare module std {
-			declare class FlowExecutor<RT, M> {
+			class FlowExecutor<RT, M> {
 			 run(): void;
 			 await(): RT;
 			}
-			declare class ChannelEmitter<T> {
+			class ChannelEmitter<T> {
 				emit(data: T): void;
 			}
 
@@ -106,6 +127,5 @@ export function getGlobals(params: { constructorBased: string[]; injectableClass
 			function createChannelEmitter<T>(slug: string): std.ChannelEmitter<T>;
 			function registerChannelListener(slug: string, listener: (...args: any[]) => std.FlowExecutor<any, any>): () => void;
 		}
-	}
 	`;
 }

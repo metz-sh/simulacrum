@@ -46,6 +46,7 @@ export type Keyword = {
 		slug: string;
 		type: string | undefined;
 	}[];
+	typeParametersLength: number;
 };
 export type Keywords = Keyword[];
 export type ClassyKeywords = (Keyword & { class: { new (): any } })[];

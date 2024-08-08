@@ -76,7 +76,7 @@ export class KeywordParser {
 		filePath: string
 	): Keywords[0] {
 		const className = classDeclaration.name?.escapedText! as string;
-
+		const typeParametersLength = classDeclaration.typeParameters?.length || 0;
 		const isClassMarked = true;
 		const isClassHidden = this.classesToHide
 			.map((_) => _.name?.getText())
@@ -120,6 +120,7 @@ export class KeywordParser {
 				},
 				methods: parsedMethods,
 				channelEmitters: [],
+				typeParametersLength,
 			};
 		}
 
@@ -138,6 +139,7 @@ export class KeywordParser {
 			},
 			methods: parsedMethods,
 			channelEmitters,
+			typeParametersLength,
 		};
 
 		const viewType = parsedClass.flags.view?.type;
