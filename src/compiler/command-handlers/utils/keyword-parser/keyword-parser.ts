@@ -4,6 +4,8 @@ import { CompilerException } from '../create-error';
 import { CompilerErrorCode } from '../../../compliler-error-codes';
 import { ShowDecorator, parseClassDecorator, parseMethodDecorator } from './decorators';
 import { Keywords, Keyword, ParsedMethod } from '../../../compiler-types';
+import { traverseAndFilter } from '../../../utils/traverse-and-filter';
+import { getFQNsOfCall } from '../../../utils/get-fqn-of-call';
 
 export class KeywordParser {
 	constructor(
@@ -74,7 +76,7 @@ export class KeywordParser {
 		filePath: string
 	): Keywords[0] {
 		const className = classDeclaration.name?.escapedText! as string;
-
+		const typeParametersLength = classDeclaration.typeParameters?.length || 0;
 		const isClassMarked = true;
 		const isClassHidden = this.classesToHide
 			.map((_) => _.name?.getText())
@@ -117,8 +119,12 @@ export class KeywordParser {
 					isConstructorBased: true,
 				},
 				methods: parsedMethods,
+				channelEmitters: [],
+				typeParametersLength,
 			};
 		}
+
+		const channelEmitters = this.parseChannelEmitters(classDeclaration);
 
 		const parsedClass: Keyword = {
 			className,
@@ -132,6 +138,8 @@ export class KeywordParser {
 				...classFlags,
 			},
 			methods: parsedMethods,
+			channelEmitters,
+			typeParametersLength,
 		};
 
 		const viewType = parsedClass.flags.view?.type;
@@ -162,6 +170,34 @@ export class KeywordParser {
 		}
 
 		return parsedClass;
+	}
+
+	parseChannelEmitters(classDeclaration: ts.ClassDeclaration) {
+		const result = traverseAndFilter<ts.CallExpression>(classDeclaration, (node) => {
+			if (!ts.isCallExpression(node)) {
+				return false;
+			}
+
+			const fqns = getFQNsOfCall(node, this.checker);
+			if (fqns.length > 1) {
+				return false;
+			}
+
+			const fqn = fqns[0];
+
+			return fqn === 'std.createChannelEmitter';
+		});
+
+		if (!result.length) {
+			return [];
+		}
+
+		const channelEmitters = result.map((r) => ({
+			slug: (r.arguments[0] as ts.StringLiteral).text,
+			type: r.typeArguments?.at(0)?.getFullText() || 'undefined',
+		}));
+
+		return channelEmitters;
 	}
 
 	private parseProperties(classDeclaration: ts.ClassDeclaration) {

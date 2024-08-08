@@ -27,6 +27,7 @@ import {
 	TickResultContainer,
 } from './runtime-types';
 import { ScheduledTaskManager } from './scheduled-task-manager';
+import { EventManager } from './event-channels/event-manager';
 
 export class Runtime {
 	private currentTick = 0;
@@ -34,6 +35,7 @@ export class Runtime {
 	private scheduledTaskManager = new ScheduledTaskManager();
 	private heap = new Heap();
 	private autoPopManager = new AutoPopManager();
+	private eventManager = new EventManager();
 
 	partition = new Map<string, PartitionedStorage>();
 
@@ -48,11 +50,16 @@ export class Runtime {
 		return this.currentTick;
 	}
 
+	getEventManager() {
+		return this.eventManager;
+	}
+
 	entities() {
 		return {
 			flows: this.flowManager.list(),
 			scheduledTasks: this.scheduledTaskManager.list(),
 			tick: this.currentTick,
+			activeChannels: this.eventManager.getActiveChannels(),
 		};
 	}
 
@@ -81,29 +88,6 @@ export class Runtime {
 
 	addAutoPopEffect(effectId: string, affectedEntities: string[]) {
 		this.autoPopManager.addAffectedTree(effectId, affectedEntities);
-
-		// const activeFlows = this.flowManager.getActive();
-
-		// for (const { flow, stack: executionRecords } of activeFlows) {
-		//     const isTracked = !!this.autoPopManager.getTracked(flow.id, effectId);
-		//     if (isTracked) {
-		//         continue;
-		//     }
-
-		//     const stack = executionRecords.peek(executionRecords.size());
-		//     for (let index = 0; index < stack.length; index++) {
-		//         const executionRecord = stack[index];
-		//         const entityId = this.heap.translateAddress(createLocationFromAddress(executionRecord.address));
-		//         if (affectedEntities.includes(entityId)) {
-		//             const pendingOperation = executionRecord.operations.at(0);
-		//             if (pendingOperation?.name === ExecuteStackOperationNames.PROVIDE_RETURN_VALUE_AND_POP) {
-		//                 break;
-		//             }
-		//             this.autoPopManager.track(flow.id, effectId, entityId);
-		//             break;
-		//         }
-		//     }
-		// }
 	}
 
 	private getAwaitedTickResponses(params: {
@@ -295,6 +279,7 @@ export class Runtime {
 		this.getHeap().reset();
 		this.partition.clear();
 		this.resetAutoPop();
+		this.eventManager.reset();
 	}
 
 	getStoredResultsFromAutoPop() {

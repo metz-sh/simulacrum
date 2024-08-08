@@ -1,4 +1,4 @@
-const forbiddenSymbols = ['MetzFlowFunction'];
+const forbiddenSymbols: string[] = [];
 
 import type * as ts from 'typescript';
 export default function parseSymbol(type: ts.Type) {

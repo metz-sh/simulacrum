@@ -4,7 +4,6 @@ import * as O from 'fp-ts/Option';
 import { ProjectState } from '../project/project.state';
 import { pipe } from 'fp-ts/function';
 import { IPosition, IRange, editor } from 'monaco-editor';
-import globalInterface from './globals/global-interface';
 
 function parseMonacoEditorOpenerCommand(
 	resource: Parameters<editor.ICodeEditorOpener['openCodeEditor']>[1],
@@ -49,11 +48,18 @@ export const createIDEStore = (
 	initialActiveFilePath?: string
 ) =>
 	createStore<IDEState>((set, get) => ({
+		globalLibraryInitialized: false,
 		activeFilePath: initialActiveFilePath,
 		monaco: O.none,
 		editor: O.none,
 
 		overlayed: false,
+
+		markGlobalLibraryInitialized() {
+			set({
+				globalLibraryInitialized: true,
+			});
+		},
 
 		setActiveFilePath(path?: string) {
 			set({

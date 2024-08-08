@@ -24,4 +24,7 @@ export type IDEState = {
 
 	enableOverlay(): void;
 	disableOverlay(): void;
+
+	globalLibraryInitialized: boolean;
+	markGlobalLibraryInitialized(): void;
 };
