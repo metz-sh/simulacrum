@@ -187,6 +187,7 @@ class NewService {
     @Injectable
     class BackendService {
 
+    	private emitter = std.createChannelEmitter({name: 'a', slug: 'a'});
       private healthy = false;
       private redis = new Redis<User>();
       private redis1 = new Redis<User>();

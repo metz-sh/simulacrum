@@ -45,6 +45,10 @@ export function getGlobals(params: { constructorBased: string[]; injectableClass
 			 run(): void;
 			 await(): RT;
 			}
+			declare class ChannelEmitter<T> {
+				emit(data: T): void;
+			}
+
 			type ScheduledFlow = { flow_type: 'scheduled_flow' }
 			type FlowFunction<T extends (...args: any) => any, Schedule> = (Schedule extends Record<any, any> ? ((...params: Parameters<T>) => ScheduledFlow) : ((...params: Parameters<T>) => std.FlowExecutor<ReturnType<T>, T>)) & { readonly __tag: unique symbol }
 			type FlowGenerator<T, Schedule> = {
@@ -98,6 +102,9 @@ export function getGlobals(params: { constructorBased: string[]; injectableClass
 			 * @link https://metz.sh
 			*/
 			function log(message?: any, ...optionalParams: any[]): void
+
+			function createChannelEmitter<T>(params: { slug: string; name: string }): std.ChannelEmitter<T>;
+			function registerChannelListener(slug: string, flowFunction: std.FlowFunction<any, 'immediate'>): () => void;
 		}
 	}
 	`;

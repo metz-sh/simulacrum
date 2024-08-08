@@ -1,4 +1,3 @@
-import * as lodash from 'lodash';
 import { Runtime } from '../runtime/runtime';
 import {
 	AwaitFlowInstruction,
@@ -8,6 +7,8 @@ import {
 	MethodRuntimeCommands,
 } from '../runtime/runtime-types';
 import { FlowExecutor } from '../runtime/flow-executor';
+import { ChannelEmitter } from '../runtime/event-channels/channel-emitter';
+import { ChannelListener } from '../runtime/event-channels/channel';
 
 function createAwaitFlowInstruction(params: {
 	flowExecutors: FlowExecutor[];
@@ -148,6 +149,14 @@ export function createStandardLibrary(runtime: Runtime, projectName: string) {
 
 		currentTick() {
 			return runtime.getCurrentTick();
+		},
+
+		createChannelEmitter(params: { slug: string; name: string }): ChannelEmitter {
+			return runtime.getEventManager().createChannelEmitter(params);
+		},
+
+		registerChannelListener(slug: string, listener: ChannelListener): () => void {
+			return runtime.getEventManager().registerChannelListener(slug, listener);
 		},
 	};
 }

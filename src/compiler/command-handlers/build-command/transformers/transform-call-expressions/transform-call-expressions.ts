@@ -4,7 +4,7 @@ import { pipe } from 'fp-ts/function';
 import { Keywords } from '../../../../compiler-types';
 
 function addRuntimeIntegration(node: ts.ClassDeclaration) {
-	const statements: ts.Statement[] = [];
+	const statementsThatMustBeOnTop: ts.Statement[] = [];
 	const existingConstructorDeclaration = node.members.find((member) =>
 		ts.isConstructorDeclaration(member)
 	) as ts.ConstructorDeclaration | undefined;
@@ -15,7 +15,7 @@ function addRuntimeIntegration(node: ts.ClassDeclaration) {
 	);
 
 	if (isDerived) {
-		statements.push(
+		statementsThatMustBeOnTop.push(
 			ts.factory.createExpressionStatement(
 				ts.factory.createCallExpression(ts.factory.createSuper(), undefined, [])
 			)
@@ -35,8 +35,7 @@ function addRuntimeIntegration(node: ts.ClassDeclaration) {
 				existingConstructorDeclaration?.parameters || [],
 				ts.factory.createBlock(
 					[
-						...(existingConstructorDeclaration?.body?.statements || []),
-						...statements,
+						...statementsThatMustBeOnTop,
 						ts.factory.createExpressionStatement(
 							ts.factory.createCallExpression(
 								ts.factory.createPropertyAccessExpression(
@@ -47,6 +46,7 @@ function addRuntimeIntegration(node: ts.ClassDeclaration) {
 								[ts.factory.createThis()]
 							)
 						),
+						...(existingConstructorDeclaration?.body?.statements || []),
 					],
 					true
 				)
