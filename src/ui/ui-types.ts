@@ -1,8 +1,6 @@
-import { MantineThemeOverride } from '@mantine/styles';
-import { type nodeTypes } from './common/node-types';
-import { SourceCode } from './models/source-code';
-import { CodeDaemonState } from './state-managers/code-daemon/code-daemon-types';
+import { type MantineThemeOverride } from '@mantine/styles';
 import { type Observable } from 'rxjs';
+import { CodeDaemonState } from './state-managers/code-daemon/code-daemon-types';
 import {
 	AnalyticsEvent,
 	type StateChangeEvent,
@@ -57,6 +55,12 @@ export type RawStorySetup = {
 	resolutionNodeMap?: DisplayState['resolutionNodeMap'];
 };
 
+export enum StoryResolution {
+	LOW = 'LOW',
+	MEDIUM = 'MEDIUM',
+	HIGH = 'HIGH',
+}
+
 export type BaseProps = {
 	height: string;
 	projectName: string;
@@ -80,5 +84,11 @@ export type EditorProps = {
 export type PlaygroundProps = {
 	storySetups: [RawStorySetup, ...RawStorySetup[]];
 	build: CodeDaemonState['build'] & { state: 'built' };
+	viewFlags?: PlaygroundViewFlags;
 	onMount?: (params: { analyticsObservable: Observable<AnalyticsEvent> }) => void;
 } & BaseProps;
+
+export type PlaygroundViewFlags = {
+	minimal?: boolean;
+	resolution?: 'low' | 'medium' | 'high';
+};

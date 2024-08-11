@@ -11,7 +11,8 @@ export const useStories = create<StoriesState>((set, get) => ({
 			params.title,
 			params.script,
 			hostStore,
-			params.resolutionNodeMap
+			params.resolutionNodeMap,
+			params.storyResolution
 		);
 		set({
 			stories: {

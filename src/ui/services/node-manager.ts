@@ -14,9 +14,9 @@ import {
 	isClassNodeData,
 	isFolderNodeData,
 } from '../components/reactflow/models';
-import { StoryResolution } from '../state-managers/story/story.store';
 import { Keyword } from '../../compiler/compiler-types';
 import { getColorThemeFromColor } from '../commands/node/set-node-color.command';
+import { StoryResolution } from '../ui-types';
 
 class NodeManager {
 	getExecutionDistribution(data: {

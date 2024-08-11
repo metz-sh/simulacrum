@@ -2,6 +2,7 @@ import { StoreApi } from 'zustand';
 import { DisplayState } from '../display/display.state';
 import { StoryState, StoryStore } from '../story/story.store';
 import { HostState } from '../host/host.state';
+import { StoryResolution } from '../../ui-types';
 
 export type StoriesState = {
 	stories: {
@@ -14,6 +15,7 @@ export type StoriesState = {
 			title: string;
 			script: StoryState['script'];
 			resolutionNodeMap?: DisplayState['resolutionNodeMap'];
+			storyResolution?: StoryResolution;
 		},
 		hostStore: StoreApi<HostState>
 	): StoryStore;

@@ -14,7 +14,7 @@ import { createStandardLibrary } from '../../../std/std';
 import { getBuiltArtifacts } from '../../commands/code-daemon/get-built-artifacts.command';
 import { StoreApi } from 'zustand';
 import { HostState } from '../../state-managers/host/host.state';
-import { StoryResolution, StoryState } from '../../state-managers/story/story.store';
+import { StoryState } from '../../state-managers/story/story.store';
 import { KeywordsToNodeParser } from '../bootloader/create-nodes';
 import { createEdgesFromNodesAndCallHierarchy } from '../bootloader/create-edges';
 import nodeManager from '../node-manager';
@@ -31,6 +31,7 @@ import {
 import { getLayoutedNodes } from '../../commands/layout/get-layouted-nodes.command';
 import { getProjectStore } from '../../commands/get-stores.util';
 import { noop } from 'lodash';
+import { StoryResolution } from '../../ui-types';
 
 export class RenderEngine {
 	private signalPacketManager: SignalPacketManager;

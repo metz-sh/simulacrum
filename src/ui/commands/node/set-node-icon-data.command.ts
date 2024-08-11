@@ -7,7 +7,7 @@ import {
 	NodeStyleCustomizations,
 	addStyleCustomizationsToNodeData,
 } from '../../components/reactflow/models';
-import { StoryResolution } from '../../state-managers/story/story.store';
+import { StoryResolution } from '../../ui-types';
 
 export function setNodeIconData(
 	hostStore: StoreApi<HostState>,

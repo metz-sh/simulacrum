@@ -10,6 +10,7 @@ import { HostContext } from '../../state-managers/host/host.store';
 import { useCommands } from '../../commands/use-command.hook';
 import { NodeData } from '../reactflow/models';
 import { StoreApi } from 'zustand';
+import { PlaygroundViewFlags } from '../../ui-types';
 
 export default memo(function StoryProviderFactory(props: {
 	projectName: string;
@@ -17,6 +18,7 @@ export default memo(function StoryProviderFactory(props: {
 	build: CodeDaemonState['build'] & { state: 'built' };
 	story: StoreApi<StoryState>;
 	height?: string;
+	viewFlags?: PlaygroundViewFlags;
 }) {
 	const { build } = props;
 	const hostStore = useContext(HostContext);
@@ -50,6 +52,7 @@ export default memo(function StoryProviderFactory(props: {
 			setIsLoaded(true);
 		})();
 	}, []);
+
 	if (!isLoaded) {
 		return (
 			<LoadingOverlay
@@ -61,5 +64,11 @@ export default memo(function StoryProviderFactory(props: {
 		);
 	}
 
-	return <StoryProvider namespace={props.namespace} height={props.height} />;
+	return (
+		<StoryProvider
+			namespace={props.namespace}
+			height={props.height}
+			viewFlags={props.viewFlags}
+		/>
+	);
 });

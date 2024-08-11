@@ -1,11 +1,12 @@
 import { Flex, Slider, Text } from '@mantine/core';
-import { StoryResolution, useStory } from '../../state-managers/story/story.store';
+import { useStory } from '../../state-managers/story/story.store';
 import PrettyPaperComponent from '../pretty-paper/pretty-paper.component';
 import { TbZoomScanFilled } from 'react-icons/tb';
 import TipComponent from '../tip/tip.component';
 import { prettifyName } from '../../../utils/prettify';
 import { RenderEngine } from '../../services/render-engine/render-engine';
 import { useReactFlow } from 'reactflow';
+import { StoryResolution } from '../../ui-types';
 
 const ResolutionValueMap: { [key in keyof typeof StoryResolution]: number } = {
 	[StoryResolution.HIGH]: 100,
