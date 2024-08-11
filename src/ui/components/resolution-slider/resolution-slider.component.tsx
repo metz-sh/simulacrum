@@ -1,4 +1,4 @@
-import { Flex, Slider, Text } from '@mantine/core';
+import { Flex, rem, Slider, Text } from '@mantine/core';
 import { useStory } from '../../state-managers/story/story.store';
 import PrettyPaperComponent from '../pretty-paper/pretty-paper.component';
 import { TbZoomScanFilled } from 'react-icons/tb';
@@ -29,16 +29,22 @@ export default function (props: { renderEngine: RenderEngine }) {
 	const resolution = useStory((state) => state.resolution);
 	const reactFlow = useReactFlow();
 	return (
-		<PrettyPaperComponent w={150} mb={10} mr={5}>
+		<PrettyPaperComponent w={150} pl={5} pr={5} pb={5} pt={5}>
 			<Slider
 				mt={5}
-				size={'xs'}
+				size={'sm'}
 				color="cyan"
 				label={(val) => MARKS.find((mark) => mark.value === val)?.label}
 				defaultValue={ResolutionValueMap[resolution]}
 				step={50}
 				marks={MARKS}
 				styles={{
+					mark: {
+						borderColor: 'gray',
+					},
+					markFilled: {
+						borderColor: 'white',
+					},
 					markLabel: { display: 'none' },
 					track: {
 						height: '4px',
@@ -50,9 +56,8 @@ export default function (props: { renderEngine: RenderEngine }) {
 				}}
 			/>
 			<TipComponent text="Control the amount of information you want to see on the playground">
-				<Flex mt={15} gap={5} justify={'center'} align={'center'}>
-					<TbZoomScanFilled />
-					<Text fz={12}>Resolution</Text>
+				<Flex mt={5} gap={5} justify={'center'} align={'center'}>
+					<Text fz={8}>Resolution</Text>
 				</Flex>
 			</TipComponent>
 		</PrettyPaperComponent>
