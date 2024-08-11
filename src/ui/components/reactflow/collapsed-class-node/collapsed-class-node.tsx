@@ -4,13 +4,14 @@ import { ThemeIcon, Text, Flex } from '@mantine/core';
 import { Icon } from '@iconify/react';
 import { ColorVariantMap } from '../../../common/color-variant-map';
 import { prettifyName } from '../../../../utils/prettify';
-import { StoryResolution, useStory } from '../../../state-managers/story/story.store';
+import { useStory } from '../../../state-managers/story/story.store';
 import { ClassNodeProps, NodeData } from '../models';
 import { AnimatePresence } from 'framer-motion';
 import CollapsedActiveIndicatorComponent from '../collapsed-utils/collapsed-active-indicator.component';
 import CollapsedCompletedIndicatorComponent from '../collapsed-utils/collapsed-completed-indicator.component';
 import PropertiesConsoleComponent from '../../properties-console/properties-console.component';
 import ConditionalRenderer from '../../conditional-renderer';
+import { StoryResolution } from '../../../ui-types';
 
 function NodeIcon(props: { data: NodeData }) {
 	const { styleCustomizations } = props.data;

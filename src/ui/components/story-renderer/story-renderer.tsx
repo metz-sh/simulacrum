@@ -9,6 +9,8 @@ import { useCommands } from '../../commands/use-command.hook';
 import { useHost } from '../../state-managers/host/host.store';
 import { StoryContext } from '../../state-managers/story/story.store';
 import { StoriesState } from '../../state-managers/stories/stories.state';
+import { PlaygroundViewFlags } from '../../ui-types';
+import ConditionalRenderer from '../conditional-renderer';
 
 const useStyles = createStyles((theme) => ({
 	storyMenu: {
@@ -24,6 +26,7 @@ function _StoryRenderer(props: {
 	build: CodeDaemonState['build'];
 	stories: StoriesState['stories'];
 	height?: string;
+	viewFlags?: PlaygroundViewFlags;
 }) {
 	const { build, stories } = props;
 
@@ -60,9 +63,18 @@ function _StoryRenderer(props: {
 
 	return (
 		<Tabs keepMounted value={activeStoryId}>
-			<div className={classes.storyMenu}>
-				<StoriesMenu activeStory={activeStory} onSelect={setActiveStoryId} />
-			</div>
+			<ConditionalRenderer
+				conditional={() => {
+					if (props.viewFlags?.minimal) {
+						return;
+					}
+					return (
+						<div className={classes.storyMenu}>
+							<StoriesMenu activeStory={activeStory} onSelect={setActiveStoryId} />
+						</div>
+					);
+				}}
+			/>
 			<div>
 				{Object.keys(stories).map((storyId, index) => (
 					<Tabs.Panel value={storyId} key={index}>
@@ -73,6 +85,7 @@ function _StoryRenderer(props: {
 								height={props.height || baseProps.height}
 								build={build}
 								story={stories[storyId]}
+								viewFlags={props.viewFlags}
 							/>
 						</StoryContext.Provider>
 					</Tabs.Panel>
@@ -86,6 +99,7 @@ export default function StoryRenderer(props: {
 	projectName: string;
 	build: CodeDaemonState['build'];
 	height?: string;
+	viewFlags?: PlaygroundViewFlags;
 }) {
 	const { stories } = useStories((state) => ({ stories: state.stories }));
 	const isEditMode = useHost((state) => state.isEditMode);

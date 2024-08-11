@@ -5,7 +5,7 @@ import { Node, Edge } from 'reactflow';
 import { EdgeData } from '../../components/base/edge/edge-data.model';
 import { layoutEngine } from '../../services/layout-engine/layout-engine';
 import { NodeData } from '../../components/reactflow/models';
-import { StoryResolution } from '../../state-managers/story/story.store';
+import { StoryResolution } from '../../ui-types';
 
 export async function getLayoutedNodes(
 	hostStore: StoreApi<HostState>,

@@ -19,7 +19,7 @@ import { nodeTypes } from '../../common/node-types';
 import PlayerControls from '../player-controls/player-controls';
 import { gridGap } from '../../common/sizes';
 import StoryScriptModal from '../story-script-modal/story-script-modal';
-import { StoryResolution, StoryState, useStory } from '../../state-managers/story/story.store';
+import { StoryState, useStory } from '../../state-managers/story/story.store';
 import StoryScriptErrorsDaemonComponent from '../story-script-errors/story-script-errors-daemon.component';
 import { useContext, useEffect, useState } from 'react';
 import { useCommands } from '../../commands/use-command.hook';
@@ -32,6 +32,7 @@ import RenderIfAllowedComponent from '../render-if-allowed/render-if-allowed.com
 import RuntimeConsoleComponent from '../runtime-console/runtime-console.component';
 import ResolutionSliderComponent from '../resolution-slider/resolution-slider.component';
 import { shallow } from 'zustand/shallow';
+import { PlaygroundViewFlags } from '../../ui-types';
 
 function focus(
 	reactFlowInstance: ReactFlowInstance,
@@ -73,7 +74,7 @@ function renderSmallScreeSizeAlert() {
 	);
 }
 
-function Story(props: { namespace: string; height?: string }) {
+function Story(props: { namespace: string; height?: string; viewFlags?: PlaygroundViewFlags }) {
 	const { toggle, fullscreen, ref } = useFullscreen();
 	const isScreenSmall = useMediaQuery('(max-width: 40em)');
 	const { nodes, edges, onEdgesChange, onNodesChange, onConnect, script, id, getActiveNodes } =

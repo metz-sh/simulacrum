@@ -30,8 +30,8 @@ import { layoutEngine } from '../../services/layout-engine/layout-engine';
 import { prettifyName } from '../../../utils/prettify';
 import { LoadingOverlay } from '@mantine/core';
 import { Keywords } from '../../../compiler/compiler-types';
-import { StoryResolution } from '../../state-managers/story/story.store';
 import { CallHierarchyContainer } from '../../../compiler/command-handlers/build-command/call-hierarchy-parser';
+import { StoryResolution } from '../../ui-types';
 
 function createPreviewMethodNode(params: {
 	id: string;

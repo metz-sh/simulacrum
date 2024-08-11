@@ -12,7 +12,7 @@ import {
 } from './layout-engine-types';
 import { EdgeData } from '../../components/base/edge/edge-data.model';
 import { NodeData, isClassNodeData, isMethodNodeData } from '../../components/reactflow/models';
-import { StoryResolution } from '../../state-managers/story/story.store';
+import { StoryResolution } from '../../ui-types';
 
 class LayoutEngine {
 	private worker = layoutEngineWorker;

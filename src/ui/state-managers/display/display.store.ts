@@ -2,8 +2,8 @@ import { create } from 'zustand';
 import { Node } from 'reactflow';
 import { DisplayState, NodeMap } from './display.state';
 import { NodeData } from '../../components/reactflow/models';
-import { StoryResolution } from '../story/story.store';
 import * as lodash from 'lodash';
+import { StoryResolution } from '../../ui-types';
 
 export const useDisplay = create<DisplayState>((set, get) => ({
 	resolutionCachedProjectVersion: {

@@ -1,6 +1,6 @@
 import { Node } from 'reactflow';
 import { NodeData } from '../../components/reactflow/models';
-import { StoryResolution } from '../story/story.store';
+import { StoryResolution } from '../../ui-types';
 
 export type NodeMap = {
 	[key: string]:

@@ -48,12 +48,7 @@ import { createEdgesFromNodesAndCallHierarchy } from '../../services/bootloader/
 import { getLayoutedNodes } from '../../commands/layout/get-layouted-nodes.command';
 import { StoryScriptModalState } from '../modals/story-script/story-script-modal.state';
 import { createStoryScriptModal } from '../modals/story-script/story-script-modal.store';
-
-export enum StoryResolution {
-	LOW = 'LOW',
-	MEDIUM = 'MEDIUM',
-	HIGH = 'HIGH',
-}
+import { StoryResolution } from '../../ui-types';
 
 export type StoryState = {
 	id: string;
@@ -182,7 +177,6 @@ export const createStoryStore = (
 	script: StoryState['script'],
 	hostStore: StoreApi<HostState>,
 	resolutionNodeMap?: StoryState['resolutionNodeMap'],
-	edgeMap?: StoryState['edgeMap'],
 	resolution?: StoryResolution
 ) =>
 	createStore<StoryState, [['zustand/subscribeWithSelector', never]]>(
@@ -205,7 +199,7 @@ export const createStoryStore = (
 				[StoryResolution.MEDIUM]: {},
 				[StoryResolution.LOW]: {},
 			},
-			edgeMap: edgeMap || {},
+			edgeMap: {},
 			runtimeEntities: {
 				flows: {
 					active: [],

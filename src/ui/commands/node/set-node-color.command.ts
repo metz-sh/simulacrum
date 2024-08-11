@@ -4,7 +4,7 @@ import { getProjectStore, getIDEStore, getStoryStore, getDisplayStore } from '..
 import { XYPosition, NodeProps } from 'reactflow';
 import { TinyColor } from '@ctrl/tinycolor';
 import { NodeData, addStyleCustomizationsToNodeData } from '../../components/reactflow/models';
-import { StoryResolution } from '../../state-managers/story/story.store';
+import { StoryResolution } from '../../ui-types';
 
 export function setNodeColor(
 	hostStore: StoreApi<HostState>,

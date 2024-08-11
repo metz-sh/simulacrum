@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { PlaygroundProps, RawStorySetup } from '../../ui-types';
+import { PlaygroundProps, PlaygroundViewFlags, RawStorySetup } from '../../ui-types';
 import { StoreApi, UseBoundStore } from 'zustand';
 import { addStoryAndSubscribe } from '../../commands/stories/add-story-and-subscribe.command';
 import { initializeDisplay } from '../../commands/display/intialize-display.command';
@@ -12,10 +12,12 @@ import Root from '../root/root.component';
 function addStories(params: {
 	storySetups: RawStorySetup[];
 	hostStore: UseBoundStore<StoreApi<HostState>>;
+	viewFlags?: PlaygroundViewFlags;
 }) {
 	for (const rawStorySetup of params.storySetups) {
 		addStoryAndSubscribe(params.hostStore, {
 			...rawStorySetup,
+			viewFlags: params.viewFlags,
 		});
 	}
 }
@@ -50,6 +52,7 @@ function Playground(props: PlaygroundProps) {
 		addStories({
 			storySetups: props.storySetups,
 			hostStore,
+			viewFlags: props.viewFlags,
 		});
 
 		setIsLoaded(true);
