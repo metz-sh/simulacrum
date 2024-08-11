@@ -1,8 +1,8 @@
 {
 	"name": "@metz/simulacrum",
-	"version": "2.0.27",
+	"version": "0.7.0",
 	"type": "module",
-	"license": "MIT",
+	"license": "Apache License Version 2.0",
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc && vite build",
