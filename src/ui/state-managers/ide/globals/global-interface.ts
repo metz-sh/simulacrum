@@ -17,6 +17,8 @@ declare module std {
 		[key in keyof T]: T[key] extends ((...args: any) => any) ? std.FlowFunction<T[key], Schedule> : never;
 	}
 
+	function lambda<T extends Function>(fn: T): T
+
 	/**
 	 * Halts the flow for specified number of ticks
 	 * @param ticks Number of ticks to halt for

@@ -158,5 +158,9 @@ export function createStandardLibrary(runtime: Runtime, projectName: string) {
 		registerChannelListener(slug: string, listener: ChannelListener): () => void {
 			return runtime.getEventManager().registerChannelListener(slug, listener);
 		},
+
+		lambda<T extends Function>(fn: T): T {
+			return fn;
+		},
 	};
 }
