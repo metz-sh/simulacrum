@@ -609,48 +609,7 @@ export const createStoryStore = (
 				const { hostStore, id, setPrimordials, nodes: oldNodes } = get();
 
 				const nodes = oldNodes.map((node) => {
-					const flagData = (() => {
-						if (isMethodNodeData(node.data)) {
-							return {
-								keywordFlags: node.data.keywordFlags,
-								parentKeywordFlags: node.data.parentKeywordFlags,
-							};
-						}
-						return {
-							keywordFlags: node.data.keywordFlags,
-						};
-					})();
-					if (flagData) {
-						const { keywordFlags, parentKeywordFlags } = flagData;
-						const { flags, hidden } = nodeManager.getDerivedValuesForNode(
-							keywordFlags,
-							parentKeywordFlags
-						);
-						node = {
-							...node,
-							data: {
-								...node.data,
-								flags,
-							},
-							hidden,
-						};
-					}
-					if (isClassNodeData(node.data)) {
-						if (node.data.flags?.collapsed && !node.data.flags.view) {
-							node.type = 'collapsedClassNode';
-						} else {
-							node.type = 'classNode';
-						}
-					}
-					if (isFolderNodeData(node.data)) {
-						if (node.data.flags?.collapsed) {
-							node.type = 'collapsedFolderNode';
-						} else {
-							node.type = 'folderNode';
-						}
-					}
-
-					return node;
+					return nodeManager.resetNodeAttributes(node);
 				});
 
 				const nodesToCollapse = nodeManager.getNodesToCollapse(resolution, nodes);
@@ -660,42 +619,7 @@ export const createStoryStore = (
 				} = getBuild(hostStore);
 
 				for (let node of nodesToCollapse) {
-					if (isClassNodeData(node.data) && !node.data.flags?.view) {
-						node.type = 'collapsedClassNode';
-					}
-					if (isFolderNodeData(node.data)) {
-						node.type = 'collapsedFolderNode';
-					}
-
-					addFlagsToNodeData(
-						{
-							collapsed: true,
-						},
-						node.data
-					);
-					node = {
-						...node,
-						data: {
-							...node.data,
-						},
-					} as ClassNode | FolderNode;
-					const children = nodeManager.getAllChildren(node.id, nodes);
-					for (let child of children) {
-						addFlagsToNodeData(
-							{
-								delegateToParent: true,
-							},
-							child.data
-						);
-						child.hidden = true;
-
-						child = {
-							...child,
-							data: {
-								...child.data,
-							},
-						};
-					}
+					nodeManager.collapseNode(node, nodes);
 				}
 
 				const edges = createEdgesFromNodesAndCallHierarchy(
