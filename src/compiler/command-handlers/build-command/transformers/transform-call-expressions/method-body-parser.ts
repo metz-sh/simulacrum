@@ -530,17 +530,17 @@ export class MethodBodyParser {
 					);
 				})();
 
-				if (isFunctionCallUnderOurPurview) {
-					return ts.factory.createParenthesizedExpression(
-						ts.factory.createBinaryExpression(
-							ts.factory.createIdentifier('yield'),
-							ts.factory.createToken(ts.SyntaxKind.AsteriskToken),
-							ts.visitEachChild(node, visitor, this.context)
-						)
-					);
+				if (!isFunctionCallUnderOurPurview) {
+					return node;
 				}
 
-				return ts.visitEachChild(node, visitor, this.context);
+				return ts.factory.createParenthesizedExpression(
+					ts.factory.createBinaryExpression(
+						ts.factory.createIdentifier('yield'),
+						ts.factory.createToken(ts.SyntaxKind.AsteriskToken),
+						ts.visitEachChild(node, visitor, this.context)
+					)
+				);
 			}
 
 			// When handling return statement, we have to be careful that the return statement

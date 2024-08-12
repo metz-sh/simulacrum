@@ -118,62 +118,6 @@ class Users {
     `,
 	},
 	{
-		path: 'app/test.ts',
-		type: 'file' as const,
-		value: `/**
- * Auto generated code for a service.
- *
- * You can update this comment block and it will reflect
- * it as description on the playground!
-*/
-@Injectable
-class NewService {
-
-    @Show
-    private healthy = false;
-
-    /**
-     * Checks if all systems are good.
-    */
-    healthCheck() {
-        if(this.isDbReachable()) {
-            this.healthy = true;
-            return 200;
-        }
-
-        this.healthy = false;
-        return 500
-    }
-
-    /**
-     * Checks if DB connection is good.
-    */
-    isDbReachable() {
-        const isFailure = this.failRandomly(10);
-        std.log('DB failure', isFailure);
-        return !isFailure;
-    }
-
-    /**
-     * This won't show up in playground since it's private.
-     *
-     * It takes a failure probability in percentage and returns
-     * a boolean indicating if it indeed failed or not.
-    */
-    private failRandomly(failProbablityPercentage: number): boolean {
-        const parsedProbability = failProbablityPercentage/100;
-        const rand = Math.random();
-
-        if(rand <= parsedProbability) {
-            return true;
-        }
-
-        return false;
-    }
-
-}`,
-	},
-	{
 		path: 'app/server/backend.ts',
 		type: 'file' as const,
 		value: `
@@ -230,7 +174,7 @@ class NewService {
         //     return cachedUser;
         // }
 
-        const userFromDB = this.userTable.find(record => record.id === id);
+        const userFromDB = this.userTable.find(std.lambda(record => record.id === id));
         if(!userFromDB) {
             return
         }
@@ -283,98 +227,6 @@ class NewService {
 
     `,
 	},
-	// {
-	//   path: 'app/src/table.ts',
-	//   value: `
-	//   type NewEntity = {
-	//     id: string,
-	//     value: string,
-	//     createdAt: number,
-	// }
-
-	// @Injectable
-	// @Table(['id', 'value', 'createdAt'])
-	// class NewTable {
-
-	//     @Show
-	//     data: NewEntity[] = [];
-
-	//     insert(recordToInsert: Omit<NewEntity, 'createdAt'>) {
-	//         const record: NewEntity = {
-	//             ...recordToInsert,
-	//             createdAt: std.currentTick(),
-	//         };
-
-	//         this.data.push(record);
-	//         return record;
-	//     }
-
-	//     find(predicate: (record: NewEntity) => boolean) {
-	//         return this.data.find(predicate);
-	//     }
-
-	//     findAll(predicate: (record: NewEntity) => boolean) {
-	//         return this.data.filter(predicate);
-	//     }
-
-	//     update(
-	//         partialUpdate: Partial<NewEntity>,
-	//         predicate: (record: NewEntity) => boolean,
-	//     ) {
-	//       const indexOfRecord = this.data.findIndex(predicate);
-	//       if(indexOfRecord < 0) {
-	//           return;
-	//       }
-	//       const existingRecord = this.data[indexOfRecord];
-	//       const updatedRecord = {
-	//           ...existingRecord,
-	//           ...partialUpdate,
-	//       };
-
-	//       this.data[indexOfRecord] = updatedRecord;
-
-	//       return updatedRecord;
-	//     }
-
-	//     delete(predicate: (record: NewEntity) => boolean) {
-	//         const index = this.data.findIndex(predicate);
-	//         if(index < 0) {
-	//             return;
-	//         }
-	//         this.data.splice(index, 1);
-	//     }
-
-	// }
-	//   `,
-	// },
-	// {
-	//   path: 'app/kk/j.ts',
-	//   value: `
-	//   @Collection
-	//   @Injectable
-	//   class JAJAJAJAJAJAJAJA {
-	//     @Show
-	//     public data: {a: number, c: string}[] = [{a: 99, c:'1'}, {a: 69, c:'2'}, {a: 70, c:'3'}, {a: 71, c:'4'}]
-	//     j() {
-
-	//     }
-	//   }
-	//   `,
-	// },
-	// {
-	//   path: 'app/bb.ts',
-	//   value: `
-	//   class BB {
-	//     async nn() {
-	//       await this.wait();
-	//       return 69;
-	//     }
-
-	//     private async wait() {
-	//       return new Promise<number>(resolve=>setTimeout(()=>resolve(69), 5000))
-	//     }
-	//   }`,
-	// },
 ];
 
 const CodeDaemon = memo((props: {}) => {
