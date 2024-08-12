@@ -25,10 +25,14 @@ export function hydrateStoryScriptFromStore(hostStore: StoreApi<HostState>, stor
 
 	const storyStore = getStoryStore(hostStore, storyId);
 	const script = storyStore.getState().script;
-	hydrateStoryScript(
-		script.compiled,
-		artifacts.bundle,
-		storyStore.getState().runtime,
-		projectName
-	);
+	try {
+		hydrateStoryScript(
+			script.compiled,
+			artifacts.bundle,
+			storyStore.getState().runtime,
+			projectName
+		);
+	} catch (error) {
+		storyStore.getState().setErrors([error]);
+	}
 }
