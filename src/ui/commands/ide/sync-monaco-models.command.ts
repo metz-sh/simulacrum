@@ -5,7 +5,7 @@ import { HostState } from '../../state-managers/host/host.state';
 import { getIDEStore, getProjectStore } from '../get-stores.util';
 import { getFilesFromFSTree } from '../../common/file-system/utils';
 
-const disposalExceptions = ['file:///compiled-globals.d.ts'];
+const disposalExceptions = ['file:///compiled-globals.d.ts', 'file:///globals.d.ts'];
 
 export function syncMonacoModels(hostStore: StoreApi<HostState>) {
 	const projectState = getProjectStore(hostStore).getState();

@@ -8,6 +8,7 @@ import { RenderEngine } from '../../services/render-engine/render-engine';
 import { useStory } from '../../state-managers/story/story.store';
 import TextAreaComponent from '../text-area/text-area.component';
 import fallbackScript from './fallback-script';
+import globalInterface from '../../state-managers/ide/globals/global-interface';
 
 const useStyles = createStyles((theme) => ({
 	content: {
@@ -195,6 +196,12 @@ export default function (props: { renderEngine: RenderEngine }) {
 						path: `story-script.ts`,
 						value: script?.raw || fallbackScript,
 					}}
+					files={[
+						{
+							path: 'globals.d.ts',
+							value: globalInterface,
+						},
+					]}
 					onBuild={build}
 					height="40vh"
 				/>

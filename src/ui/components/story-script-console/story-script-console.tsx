@@ -25,6 +25,7 @@ const useStyles = createStyles((theme) => ({
 
 export default function (props: {
 	sourceCode: SourceCode;
+	files: SourceCode[];
 	onBuild: (transpiledCode: string, tsCode: string) => void;
 	height?: string;
 }) {
@@ -39,14 +40,16 @@ export default function (props: {
 
 	useEffect(() => {
 		if (monaco) {
-			const { path, value } = props.sourceCode;
-			const uri = monaco.Uri.parse(path);
-			const existingModel = monaco.editor.getModel(uri);
-			if (existingModel) {
-				existingModel.setValue(value);
-				return;
+			for (const file of [props.sourceCode, ...props.files]) {
+				const { path, value } = file;
+				const uri = monaco.Uri.parse(path);
+				const existingModel = monaco.editor.getModel(uri);
+				if (existingModel) {
+					existingModel.setValue(value);
+					return;
+				}
+				monaco.editor.createModel(value, 'typescript', monaco.Uri.parse(path));
 			}
-			monaco.editor.createModel(value, 'typescript', monaco.Uri.parse(path));
 		}
 	}, [monaco]);
 
