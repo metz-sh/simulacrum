@@ -13,6 +13,7 @@ import {
 	addStyleCustomizationsToNodeData,
 	isClassNodeData,
 	isFolderNodeData,
+	isMethodNodeData,
 } from '../components/reactflow/models';
 import { Keyword } from '../../compiler/compiler-types';
 import { getColorThemeFromColor } from '../commands/node/set-node-color.command';
@@ -198,6 +199,92 @@ class NodeManager {
 		);
 
 		return collectedLogs;
+	}
+
+	resetNodeAttributes(node: Node<NodeData>) {
+		const flagData = (() => {
+			if (isMethodNodeData(node.data)) {
+				return {
+					keywordFlags: node.data.keywordFlags,
+					parentKeywordFlags: node.data.parentKeywordFlags,
+				};
+			}
+			return {
+				keywordFlags: node.data.keywordFlags,
+			};
+		})();
+		if (flagData) {
+			const { keywordFlags, parentKeywordFlags } = flagData;
+			const { flags, hidden } = this.getDerivedValuesForNode(
+				keywordFlags,
+				parentKeywordFlags
+			);
+			node = {
+				...node,
+				data: {
+					...node.data,
+					flags,
+				},
+				hidden,
+			};
+		}
+		if (isClassNodeData(node.data)) {
+			if (node.data.flags?.collapsed && !node.data.flags.view) {
+				node.type = 'collapsedClassNode';
+			} else {
+				node.type = 'classNode';
+			}
+		}
+		if (isFolderNodeData(node.data)) {
+			if (node.data.flags?.collapsed) {
+				node.type = 'collapsedFolderNode';
+			} else {
+				node.type = 'folderNode';
+			}
+		}
+
+		return node;
+	}
+
+	collapseNode(node: ClassNode | FolderNode, allNodes: Node<NodeData>[]) {
+		if (isClassNodeData(node.data) && !node.data.flags?.view) {
+			node.type = 'collapsedClassNode';
+		}
+		if (isFolderNodeData(node.data)) {
+			node.type = 'collapsedFolderNode';
+		}
+
+		addFlagsToNodeData(
+			{
+				collapsed: true,
+			},
+			node.data
+		);
+
+		node = {
+			...node,
+			data: {
+				...node.data,
+			},
+		} as ClassNode | FolderNode;
+
+		const children = this.getAllChildren(node.id, allNodes);
+		for (let child of children) {
+			addFlagsToNodeData(
+				{
+					delegateToParent: true,
+				},
+				child.data
+			);
+			child.hidden = true;
+
+			child = {
+				...child,
+				data: {
+					...child.data,
+				},
+			};
+		}
 	}
 }
 

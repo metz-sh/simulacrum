@@ -76,4 +76,11 @@ export const useDisplay = create<DisplayState>((set, get) => ({
 			resolutionCachedProjectVersion,
 		});
 	},
+
+	isLayoutCacheIncomplete(resolution, nodes) {
+		const nodeMap = get().resolutionNodeMap[resolution];
+		const anyNodeMissing = nodes.find((node) => !nodeMap[node.id]);
+
+		return !!anyNodeMissing;
+	},
 }));
