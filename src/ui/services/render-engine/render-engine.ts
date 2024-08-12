@@ -166,7 +166,7 @@ export class RenderEngine {
 				reactFlow,
 				this.getStoryState().nodes.filter((n) => !n.hidden)
 			);
-		}, 10);
+		}, 100);
 	}
 
 	private syncInstancePropertyValuesToStory() {
