@@ -1,8 +1,10 @@
 import '../../styles/font.css';
 import { ModalsProvider } from '@mantine/modals';
 import { BaseProps } from '../../ui-types';
-import { MantineProvider, MantineThemeOverride } from '@mantine/core';
+import { Flex, MantineProvider, MantineThemeOverride, Text } from '@mantine/core';
 import { ContextMenuProvider } from 'mantine-contextmenu';
+import { useMediaQuery } from '@mantine/hooks';
+import PrettyPaperComponent from '../pretty-paper/pretty-paper.component';
 
 function Definitions() {
 	return (
@@ -31,6 +33,20 @@ const defautTheme: MantineThemeOverride = {
 };
 
 export default function Root(props: BaseProps & { children: React.ReactNode }) {
+	const isScreenSmall = useMediaQuery('(max-width: 40em)');
+	let root = props.children;
+	if (isScreenSmall) {
+		root = (
+			<PrettyPaperComponent w={'100vw'} h={'100vh'}>
+				<Flex w={'100%'} h={'100%'} justify={'center'} align={'center'}>
+					<Text color="red" ff={'Fira Mono'}>
+						This screen is too small. Please open on a larger one!
+					</Text>
+				</Flex>
+			</PrettyPaperComponent>
+		);
+	}
+
 	const { enableModalProvider } = props;
 	const Container = (props: { children: React.ReactNode }) =>
 		enableModalProvider ? (
@@ -50,7 +66,7 @@ export default function Root(props: BaseProps & { children: React.ReactNode }) {
 			<ContextMenuProvider>
 				<Container>
 					<Definitions />
-					{props.children}
+					{root}
 				</Container>
 			</ContextMenuProvider>
 		</MantineProvider>
