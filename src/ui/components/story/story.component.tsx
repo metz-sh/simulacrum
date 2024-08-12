@@ -66,17 +66,8 @@ const selector = (state: StoryState) => ({
 	getActiveNodes: state.getActiveNodes,
 });
 
-function renderSmallScreeSizeAlert() {
-	return (
-		<Paper shadow="xs" p="sm" style={{ marginBottom: '20px' }}>
-			<Text>This screen size is not ideal, but hey when life gives you lemons... </Text>
-		</Paper>
-	);
-}
-
 function Story(props: { namespace: string; height?: string; viewFlags?: PlaygroundViewFlags }) {
 	const { toggle, fullscreen, ref } = useFullscreen();
-	const isScreenSmall = useMediaQuery('(max-width: 40em)');
 	const { nodes, edges, onEdgesChange, onNodesChange, onConnect, script, id, getActiveNodes } =
 		useStory(selector, shallow);
 	const hostStore = useContext(HostContext);
@@ -116,7 +107,6 @@ function Story(props: { namespace: string; height?: string; viewFlags?: Playgrou
 			</RenderIfAllowedComponent>
 
 			<RenderDaemonComponent renderEngine={renderEngine} reactFlowInstance={reactFlow} />
-			{/* {isScreenSmall && renderSmallScreeSizeAlert()} */}
 			<div
 				ref={ref}
 				className={fullscreen ? 'flow_fullscreen' : 'flow'}
