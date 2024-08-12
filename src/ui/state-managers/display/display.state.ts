@@ -29,4 +29,6 @@ export type DisplayState = {
 		projectVersion: number
 	) => void;
 	setCachedProjectVersion: (resolution: StoryResolution, version: number) => void;
+
+	isLayoutCacheIncomplete: (resolution: StoryResolution, nodes: Node<NodeData>[]) => boolean;
 };

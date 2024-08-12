@@ -20,6 +20,8 @@ import { createEdgesFromNodesAndCallHierarchy } from '../bootloader/create-edges
 import nodeManager from '../node-manager';
 import { Runtime } from '../../../runtime/runtime';
 import {
+	ClassNode,
+	FolderNode,
 	MethodNode,
 	MethodNodeData,
 	NodeData,
@@ -191,6 +193,8 @@ export class RenderEngine {
 			(instance) => !this.runtime.getHeap().canTranslateAddress(instance.address)
 		);
 		const allCurrentNodes = this.storyStore.getState().nodes;
+		const currentResolution = this.storyStore.getState().resolution;
+
 		const { keywords, callHierarchyContainer } = getBuiltArtifacts(this.hostStore);
 
 		const nodesToAdd = unsyncedAddresses
@@ -233,8 +237,21 @@ export class RenderEngine {
 			})
 			.flat();
 
+		const nodes = [...allCurrentNodes, ...nodesToAdd];
+
+		const nodeIdsToCollapse = nodeManager
+			.getNodesToCollapse(currentResolution, nodes)
+			.map((n) => n.id);
+		const newNodesToCollapse = nodesToAdd.filter((n) => nodeIdsToCollapse.includes(n.id)) as (
+			| ClassNode
+			| FolderNode
+		)[];
+
+		for (let node of newNodesToCollapse) {
+			nodeManager.collapseNode(node, nodes);
+		}
+
 		if (nodesToAdd.length) {
-			const nodes = [...allCurrentNodes, ...nodesToAdd];
 			const edges = createEdgesFromNodesAndCallHierarchy(
 				this.getStoryState().id,
 				nodes,

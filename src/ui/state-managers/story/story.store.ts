@@ -49,6 +49,7 @@ import { getLayoutedNodes } from '../../commands/layout/get-layouted-nodes.comma
 import { StoryScriptModalState } from '../modals/story-script/story-script-modal.state';
 import { createStoryScriptModal } from '../modals/story-script/story-script-modal.store';
 import { StoryResolution } from '../../ui-types';
+import { getDisplayStore } from '../../commands/get-stores.util';
 
 export type StoryState = {
 	id: string;
@@ -628,14 +629,21 @@ export const createStoryStore = (
 					callHierarchyContainer
 				);
 
+				const isLayoutCacheIncomplete = getDisplayStore(hostStore)
+					.getState()
+					.isLayoutCacheIncomplete(resolution, nodes);
 				const layoutedNodes = await getLayoutedNodes(hostStore, {
-					atRuntime: false,
 					resolution,
 					projectName: `${hostStore.getState().baseProps.projectName}_${resolution}`,
 					projectVersion: projectVersion,
-					isBuildDifferentThanBefore: isDifferentThanBefore,
 					nodes,
 					edges,
+					...(isLayoutCacheIncomplete
+						? { atRuntime: true }
+						: {
+								atRuntime: false,
+								isBuildDifferentThanBefore: isDifferentThanBefore,
+							}),
 				});
 
 				set({
