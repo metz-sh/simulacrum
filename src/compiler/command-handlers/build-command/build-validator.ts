@@ -3,6 +3,8 @@ import { CompilerErrors } from '../../compiler-types';
 import { CompilerErrorCode } from '../../compliler-error-codes';
 import { getErrorPosition } from '../utils/get-error-position';
 import { Keywords } from '../../compiler-types';
+import { getFQNsOfCall } from '../../utils/get-fqn-of-call';
+import { isFqnMarked } from '../../utils/is-fqn-marked';
 
 export class BuildValidator {
 	sourceFiles: readonly ts.SourceFile[];
@@ -27,7 +29,10 @@ export class BuildValidator {
 
 	validateAfterParsing(params: { keywords: Keywords }) {
 		const codeSourceFiles = this.sourceFiles;
-		const errors = [...this.noWeirdConstructingAllowed(codeSourceFiles, params.keywords)];
+		const errors = [
+			...this.noWeirdConstructingAllowed(codeSourceFiles, params.keywords),
+			...this.noUsageOfMarkedMethodsInForeignFunctions(codeSourceFiles, params.keywords),
+		];
 
 		if (errors.length) {
 			return errors;
@@ -146,6 +151,63 @@ export class BuildValidator {
 		}
 
 		return errors;
+	}
+
+	private noUsageOfMarkedMethodsInForeignFunctions(
+		sourceFiles: readonly ts.SourceFile[],
+		keywords: Keywords
+	) {
+		const errors: CompilerErrors = [];
+		for (const sourceFile of sourceFiles) {
+			const visitor = (node: ts.Node) => {
+				if (ts.isCallExpression(node)) {
+					node.arguments.forEach((arg) => {
+						this.collectErrorsFromCallExpressionArgument(
+							arg,
+							keywords,
+							sourceFile,
+							errors
+						);
+					});
+				}
+				ts.forEachChild(node, visitor);
+			};
+
+			ts.forEachChild(sourceFile, visitor);
+		}
+
+		return errors;
+	}
+
+	private collectErrorsFromCallExpressionArgument(
+		expression: ts.Expression,
+		keywords: Keywords,
+		sourceFile: ts.SourceFile,
+		errors: CompilerErrors
+	) {
+		const callVisitor = (node: ts.Node) => {
+			if (ts.isExpression(node)) {
+				const symbol = this.checker.getSymbolAtLocation(node);
+				const fqns = getFQNsOfCall(node, this.checker);
+				for (const fqn of fqns) {
+					if (symbol && isFqnMarked(fqn, keywords)) {
+						errors.push({
+							sourceable: true,
+							fileName: sourceFile.fileName,
+							message: `A class method is being used inside a function call that's outside the runtime's purview. This will cause undefined behaviour.`,
+							position: getErrorPosition({
+								sourceFile,
+								node,
+							}),
+							code: CompilerErrorCode.UNKNOWN,
+						});
+					}
+				}
+			}
+			ts.forEachChild(node, callVisitor);
+		};
+
+		ts.forEachChild(expression, callVisitor);
 	}
 
 	private noSuperAllowed(sourceFiles: readonly ts.SourceFile[]): CompilerErrors {

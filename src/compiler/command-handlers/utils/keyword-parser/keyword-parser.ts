@@ -6,6 +6,7 @@ import { ShowDecorator, parseClassDecorator, parseMethodDecorator } from './deco
 import { Keywords, Keyword, ParsedMethod } from '../../../compiler-types';
 import { traverseAndFilter } from '../../../utils/traverse-and-filter';
 import { getFQNsOfCall } from '../../../utils/get-fqn-of-call';
+import { extractClassAndMethod } from '../../../utils/extract-class-and-method';
 
 export class KeywordParser {
 	constructor(
@@ -178,7 +179,7 @@ export class KeywordParser {
 				return false;
 			}
 
-			const fqns = getFQNsOfCall(node, this.checker);
+			const fqns = getFQNsOfCall(node.expression, this.checker);
 			if (fqns.length > 1) {
 				return false;
 			}
@@ -283,12 +284,5 @@ export class KeywordParser {
 			})),
 			returnType: this.checker.typeToString(this.checker.getReturnTypeOfSignature(signature)),
 		};
-	}
-
-	private getHash(typeSignatures: (string | undefined)[]) {
-		const hash = typeSignatures
-			.map<string>((signature) => (signature ? removeWhitespace(signature) : ''))
-			.join();
-		return hash;
 	}
 }

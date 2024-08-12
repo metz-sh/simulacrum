@@ -530,17 +530,17 @@ export class MethodBodyParser {
 					);
 				})();
 
-				if (isFunctionCallUnderOurPurview) {
-					return ts.factory.createParenthesizedExpression(
-						ts.factory.createBinaryExpression(
-							ts.factory.createIdentifier('yield'),
-							ts.factory.createToken(ts.SyntaxKind.AsteriskToken),
-							ts.visitEachChild(node, visitor, this.context)
-						)
-					);
+				if (!isFunctionCallUnderOurPurview) {
+					return this.parseFunctionCallOutOfOurPurview(node);
 				}
 
-				return ts.visitEachChild(node, visitor, this.context);
+				return ts.factory.createParenthesizedExpression(
+					ts.factory.createBinaryExpression(
+						ts.factory.createIdentifier('yield'),
+						ts.factory.createToken(ts.SyntaxKind.AsteriskToken),
+						ts.visitEachChild(node, visitor, this.context)
+					)
+				);
 			}
 
 			// When handling return statement, we have to be careful that the return statement
@@ -563,6 +563,23 @@ export class MethodBodyParser {
 		};
 
 		return visitor;
+	}
+
+	private parseFunctionCallOutOfOurPurview(node: ts.CallExpression) {
+		return ts.factory.updateCallExpression(
+			node,
+			node.expression,
+			node.typeArguments,
+			node.arguments.map((arg) => this.parseArgumentFunctionCallOutOfOurPurview(arg))
+		);
+	}
+
+	private parseArgumentFunctionCallOutOfOurPurview(expression: ts.Expression) {
+		const type = this.checker.getTypeAtLocation(expression);
+		const signatures = this.checker.getSignaturesOfType(type, ts.SignatureKind.Call);
+		const declarations = signatures.map((s) => s.declaration).filter((_) => !!_);
+
+		return expression;
 	}
 
 	private getForbiddenMethodVisitor(name: string) {
