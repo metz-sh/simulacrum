@@ -531,7 +531,7 @@ export class MethodBodyParser {
 				})();
 
 				if (!isFunctionCallUnderOurPurview) {
-					return this.parseFunctionCallOutOfOurPurview(node);
+					return node;
 				}
 
 				return ts.factory.createParenthesizedExpression(
@@ -563,23 +563,6 @@ export class MethodBodyParser {
 		};
 
 		return visitor;
-	}
-
-	private parseFunctionCallOutOfOurPurview(node: ts.CallExpression) {
-		return ts.factory.updateCallExpression(
-			node,
-			node.expression,
-			node.typeArguments,
-			node.arguments.map((arg) => this.parseArgumentFunctionCallOutOfOurPurview(arg))
-		);
-	}
-
-	private parseArgumentFunctionCallOutOfOurPurview(expression: ts.Expression) {
-		const type = this.checker.getTypeAtLocation(expression);
-		const signatures = this.checker.getSignaturesOfType(type, ts.SignatureKind.Call);
-		const declarations = signatures.map((s) => s.declaration).filter((_) => !!_);
-
-		return expression;
 	}
 
 	private getForbiddenMethodVisitor(name: string) {
