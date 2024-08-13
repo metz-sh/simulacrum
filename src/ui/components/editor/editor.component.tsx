@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { EditorProps, RawStorySetup } from '../../ui-types';
 import { StoreApi, UseBoundStore } from 'zustand';
 import { addStoryAndSubscribe } from '../../commands/stories/add-story-and-subscribe.command';
@@ -25,18 +25,32 @@ function addStories(params: {
 	}
 }
 
-function Editor(props: EditorProps) {
-	const createStore = () =>
-		createHostStore(
-			true,
-			{
-				name: props.projectName,
-				fsItems: props.project,
-			},
-			props
-		);
-	const [hostStore] = useState<UseBoundStore<StoreApi<HostState>>>(createStore);
+const Editor = memo((props: EditorProps & { hostStore: UseBoundStore<StoreApi<HostState>> }) => {
+	const { hostStore } = props;
 
+	return (
+		<HostContext.Provider value={hostStore}>
+			<CodeDaemon
+				projectName={props.projectName}
+				store={hostStore.getState().stores.codeDaemonStore}
+			>
+				<div style={{ position: 'relative' }}>
+					<Ide height={props.height} />
+				</div>
+			</CodeDaemon>
+		</HostContext.Provider>
+	);
+});
+
+export default function (props: EditorProps) {
+	const hostStore = createHostStore(
+		true,
+		{
+			name: props.projectName,
+			fsItems: props.project,
+		},
+		props
+	);
 	useEffect(() => {
 		if (props.display) {
 			initializeDisplay(hostStore, props.display);
@@ -64,25 +78,9 @@ function Editor(props: EditorProps) {
 			});
 		}
 	});
-
-	return (
-		<HostContext.Provider value={hostStore}>
-			<CodeDaemon
-				projectName={props.projectName}
-				store={hostStore.getState().stores.codeDaemonStore}
-			>
-				<div style={{ position: 'relative' }}>
-					<Ide height={props.height} />
-				</div>
-			</CodeDaemon>
-		</HostContext.Provider>
-	);
-}
-
-export default function (props: EditorProps) {
 	return (
 		<Root {...props}>
-			<Editor {...props} />
+			<Editor {...props} hostStore={hostStore} />
 		</Root>
 	);
 }
