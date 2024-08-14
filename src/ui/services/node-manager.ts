@@ -247,7 +247,7 @@ class NodeManager {
 	}
 
 	collapseNode(node: ClassNode | FolderNode, allNodes: Node<NodeData>[]) {
-		if (isClassNodeData(node.data) && !node.data.flags?.view) {
+		if (isClassNodeData(node.data)) {
 			node.type = 'collapsedClassNode';
 		}
 		if (isFolderNodeData(node.data)) {
