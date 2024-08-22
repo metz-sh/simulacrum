@@ -86,33 +86,31 @@ function ControlButtons(props: {
 					</PopoverDropdownHolderComponent>
 				</Popover.Dropdown>
 			</Popover>
-			<RenderIfAllowedComponent>
-				<TipComponent
-					text={
-						isErrored
-							? 'Please fix errors'
-							: !script.raw.length
-								? 'Please set story script'
-								: 'Edit Story Script'
-					}
+			<TipComponent
+				text={
+					isErrored
+						? 'Please fix errors'
+						: !script.raw.length
+							? 'Please set story script'
+							: 'Edit Story Script'
+				}
+			>
+				<Button
+					size="md"
+					radius={5}
+					onClick={() => {
+						openStoryScriptModal(storyId);
+					}}
 				>
-					<Button
-						size="md"
-						radius={5}
-						onClick={() => {
-							openStoryScriptModal(storyId);
-						}}
-					>
-						{isErrored ? (
-							<MdError color="#ff4a4a" />
-						) : !script.raw?.length ? (
-							<MdWarning color="orange" />
-						) : (
-							<LuScroll />
-						)}
-					</Button>
-				</TipComponent>
-			</RenderIfAllowedComponent>
+					{isErrored ? (
+						<MdError color="#ff4a4a" />
+					) : !script.raw?.length ? (
+						<MdWarning color="orange" />
+					) : (
+						<LuScroll />
+					)}
+				</Button>
+			</TipComponent>
 			<TipComponent text={isFinished ? 'Flow is complete, please reset' : 'Reset Playground'}>
 				<Button
 					size="md"
