@@ -151,7 +151,7 @@ export class KeywordParser {
 				throw new CompilerException(
 					`With ${viewType} view you can only show one property. Looks like you are showing: ${violatingPropeties}`
 				)
-					.set('code', CompilerErrorCode.TABLE_VIEW_TOO_MANY_SOURCES)
+					.set('code', CompilerErrorCode.VIEW_TOO_MANY_SOURCES)
 					.addHighlights([violatingPropeties])
 					.addSource({
 						sourceFile,
@@ -162,7 +162,7 @@ export class KeywordParser {
 				throw new CompilerException(
 					`With ${viewType} view you need to mark a data source using @Show`
 				)
-					.set('code', CompilerErrorCode.TABLE_VIEW_TOO_FEW_SOURCES)
+					.set('code', CompilerErrorCode.VIEW_TOO_FEW_SOURCES)
 					.addSource({
 						sourceFile,
 						node: classDeclaration,
