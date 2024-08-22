@@ -314,7 +314,7 @@ export class RenderEngine {
 				const accessibleLocation = createLocationFromAddress(responseToCatchup.address);
 				const nodeId = this.runtime.getHeap().translateAddress(accessibleLocation);
 
-				const parsed = await this.parseTickResponseToTimelineItem(responseToCatchup);
+				const parsed = this.parseTickResponseToTimelineItem(responseToCatchup);
 
 				this.getStoryState().updateExecutionLog(autoPopped.flow, nodeId, parsed.item);
 			}
@@ -484,6 +484,11 @@ export class RenderEngine {
 		return node;
 	}
 
+	private getNodeFromAddress(address: Address) {
+		const nodeId = this.runtime.getHeap().translateAddress(createLocationFromAddress(address));
+		return this.getStoryState().getNode(nodeId);
+	}
+
 	private parseTickResponseToTimelineItem(tickResponse: TickResponses): {
 		nodeIdToRender: string;
 		item: NodeStateTimelineItem;
@@ -508,7 +513,7 @@ export class RenderEngine {
 			const destinationNode = this.getDelegatedNode(tickResponse.destination);
 			const destination = {
 				id: destinationNode.id,
-				name: nodeManager.getNodeName(destinationNode),
+				name: nodeManager.getNodeName(this.getNodeFromAddress(tickResponse.destination)),
 			};
 			return {
 				nodeIdToRender: sourceNodeId,
@@ -525,7 +530,7 @@ export class RenderEngine {
 			const destinationNode = this.getDelegatedNode(tickResponse.destination);
 			const destination = {
 				id: destinationNode.id,
-				name: nodeManager.getNodeName(destinationNode),
+				name: nodeManager.getNodeName(this.getNodeFromAddress(tickResponse.destination)),
 			};
 			return {
 				nodeIdToRender: sourceNodeId,
@@ -542,7 +547,7 @@ export class RenderEngine {
 			const destinationNode = this.getDelegatedNode(tickResponse.destination);
 			const destination = {
 				id: destinationNode.id,
-				name: nodeManager.getNodeName(destinationNode),
+				name: nodeManager.getNodeName(this.getNodeFromAddress(tickResponse.destination)),
 			};
 
 			return {
