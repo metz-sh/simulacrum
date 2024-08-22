@@ -9,6 +9,8 @@ import { useStory } from '../../state-managers/story/story.store';
 import TextAreaComponent from '../text-area/text-area.component';
 import fallbackScript from './fallback-script';
 import globalInterface from '../../state-managers/ide/globals/global-interface';
+import { Prism } from '@mantine/prism';
+import PrettyPaperComponent from '../pretty-paper/pretty-paper.component';
 
 const useStyles = createStyles((theme) => ({
 	content: {
@@ -112,6 +114,42 @@ export default function (props: { renderEngine: RenderEngine }) {
 		});
 	};
 
+	const codeRenderer = false ? (
+		<CodeConsole
+			sourceCode={{
+				path: `story-script.ts`,
+				value: script?.raw || fallbackScript,
+			}}
+			files={[
+				{
+					path: 'globals.d.ts',
+					value: globalInterface,
+				},
+			]}
+			onBuild={build}
+			height="40vh"
+		/>
+	) : (
+		<PrettyPaperComponent
+			sx={{
+				backgroundColor: 'rgb(6,6,12)',
+			}}
+		>
+			<Prism
+				mt={20}
+				noCopy
+				language={'tsx'}
+				styles={{
+					code: {
+						fontSize: '18px',
+					},
+				}}
+			>
+				{script?.raw || fallbackScript}
+			</Prism>
+		</PrettyPaperComponent>
+	);
+
 	return (
 		<Modal
 			opened={isOpen}
@@ -191,20 +229,7 @@ export default function (props: { renderEngine: RenderEngine }) {
 					/>
 				</div>
 
-				<CodeConsole
-					sourceCode={{
-						path: `story-script.ts`,
-						value: script?.raw || fallbackScript,
-					}}
-					files={[
-						{
-							path: 'globals.d.ts',
-							value: globalInterface,
-						},
-					]}
-					onBuild={build}
-					height="40vh"
-				/>
+				{codeRenderer}
 			</div>
 		</Modal>
 	);
