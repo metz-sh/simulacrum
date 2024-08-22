@@ -28,8 +28,6 @@ import { HostContext, useHost } from '../../state-managers/host/host.store';
 import { RenderEngine } from '../../services/render-engine/render-engine';
 import RenderDaemonComponent from '../render-daemon/render-daemon.component';
 import { getStoryStore } from '../../commands/get-stores.util';
-import RenderIfAllowedComponent from '../render-if-allowed/render-if-allowed.component';
-import RuntimeConsoleComponent from '../runtime-console/runtime-console.component';
 import ResolutionSliderComponent from '../resolution-slider/resolution-slider.component';
 import { shallow } from 'zustand/shallow';
 import { PlaygroundViewFlags } from '../../ui-types';
@@ -101,10 +99,8 @@ function Story(props: { namespace: string; height?: string; viewFlags?: Playgrou
 
 	return (
 		<>
-			<RenderIfAllowedComponent>
-				<StoryScriptModal renderEngine={renderEngine} />
-				<StoryScriptErrorsDaemonComponent />
-			</RenderIfAllowedComponent>
+			<StoryScriptModal renderEngine={renderEngine} />
+			<StoryScriptErrorsDaemonComponent />
 
 			<RenderDaemonComponent renderEngine={renderEngine} reactFlowInstance={reactFlow} />
 			<div
