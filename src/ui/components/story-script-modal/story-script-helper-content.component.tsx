@@ -35,7 +35,7 @@ export default function () {
 				Set all the necessary things for your story here. For more,&nbsp;
 				<DocModalComponent
 					title="How do stories work?"
-					link="https://docs.metz.sh/fundamentals/stories#how-does-it-work"
+					link="https://docs.metz.sh/stories"
 					text="check out docs"
 				/>
 			</Text>

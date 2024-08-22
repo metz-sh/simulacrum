@@ -215,7 +215,7 @@ export default function (props: { activeStory: StoryState; onSelect: (id: string
 					text="What's this?"
 					size="xs"
 					title="What are stories?"
-					link="https://docs.metz.sh/fundamentals/stories"
+					link="https://docs.metz.sh/stories"
 				/>
 			</Group>
 			<Paper shadow="xs" className={classes.menu}>
