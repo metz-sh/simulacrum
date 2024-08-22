@@ -86,12 +86,13 @@ export function getGlobals(keywords: Keywords) {
 
 		/**
 		 * Globally available helper module
+		 * @documentation https://docs.metz.sh/standard-library
 		*/
 		declare module std {
 			/**
 			 * Resolve an instance of a class as long it's injectable.
 			 * @param service
-			 * @link https://metz.sh
+			 * @documentation https://docs.metz.sh/dependencies-and-scope/dependencies#dependency-injection
 			*/
 			function resolve<T extends InjectableClasses>(
 				service: Constructor<T>
@@ -102,10 +103,13 @@ export function getGlobals(keywords: Keywords) {
 			 * @param name Name of the flow
 			 * @param name Object of class this flow is for
 			 * @param {ScheduleOptions} options Control the schedule of flow. When provided with after, the flow will run after given ticks have elapsed. With every, the flow runs after every time given ticks have elapsed
-			 * @link https://metz.sh
+			 * @documentation https://docs.metz.sh/flows-101
 			*/
 			function flow<T extends AllClasses, Schedule extends { after: number } | { every: number } | 'immediate' = 'immediate'>(name: string, classInstance: T, schedule: Schedule = 'immediate'): std.FlowGenerator<T, Schedule>
 
+			/**
+			 * @documentation https://docs.metz.sh/events
+			*/
 			function registerChannelListener<Slug extends AllChannelSlugs>(slug: Slug, listener: (data: ChannelSlugTypeMap<Slug>) => std.FlowExecutor<any, any>): () => void;
 		}
 	`;

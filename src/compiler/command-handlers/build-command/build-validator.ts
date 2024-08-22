@@ -199,7 +199,7 @@ export class BuildValidator {
 								sourceFile,
 								node,
 							}),
-							code: CompilerErrorCode.UNKNOWN,
+							code: CompilerErrorCode.METHOD_CALL_INSIDE_FUNCTION,
 						});
 					}
 				}
