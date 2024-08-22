@@ -114,7 +114,7 @@ export default function (props: { renderEngine: RenderEngine }) {
 		});
 	};
 
-	const codeRenderer = false ? (
+	const codeRenderer = isEditMode ? (
 		<CodeConsole
 			sourceCode={{
 				path: `story-script.ts`,
