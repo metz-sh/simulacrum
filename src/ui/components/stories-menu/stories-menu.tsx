@@ -12,6 +12,7 @@ import {
 	Highlight,
 	Group,
 	Flex,
+	Indicator,
 } from '@mantine/core';
 import { VscPlay } from 'react-icons/vsc';
 import { useDisclosure } from '@mantine/hooks';
@@ -202,6 +203,8 @@ export default function (props: { activeStory: StoryState; onSelect: (id: string
 		emitAnalyticsEvent: state.emitAnalyticsEvent,
 	}));
 
+	const storyCount = Object.keys(stories).length;
+
 	const storyNameBox = (
 		<div className={classes.menuBox}>
 			<Group position="apart" w={'100%'}>
@@ -218,7 +221,17 @@ export default function (props: { activeStory: StoryState; onSelect: (id: string
 			<Paper shadow="xs" className={classes.menu}>
 				<Flex direction={'column'} justify={'space-evenly'} gap={'14px'} w={'100%'}>
 					<Flex gap={'10px'} align={'center'} justify={'start'} w={'100%'}>
-						<Burger opened={opened} onClick={toggle} size={'sm'} />
+						<Indicator
+							inline
+							size={'xs'}
+							label={storyCount}
+							color="rgb(6,3,10)"
+							ff={'Fira Mono'}
+							position="top-end"
+							offset={3}
+						>
+							<Burger opened={opened} onClick={toggle} size={'sm'} />
+						</Indicator>
 						<div className={classes.activeStoryTitle}>
 							<Text size={'xl'}>{props.activeStory.title}</Text>
 						</div>
