@@ -139,6 +139,7 @@ function getStateSizes(providedHeight?: string) {
 
 export default function () {
 	const { classes } = useStyles();
+	const [state, setState] = useState<'open' | 'enlarged' | 'closed'>('open');
 
 	const { preview, build, useProject, compiledProjectVersion } = useCodeDaemon(
 		(state) => ({
@@ -163,7 +164,11 @@ export default function () {
 		ide: { enableIDEOverlay, disableIDEOverlay, setEditorLocation },
 	} = useCommands();
 
-	const [state, setState] = useState<'open' | 'enlarged' | 'closed'>('open');
+	useEffect(() => {
+		if (build.state === 'built') {
+			setState('enlarged');
+		}
+	}, [build.state]);
 
 	useEffect(() => {
 		if (state === 'enlarged') {
