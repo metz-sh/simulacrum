@@ -6,10 +6,10 @@
 
 <p align="center">
 	<a href="https://try.metz.sh">Try in Playground</a>
-	.
+	·
 	<a href="https://docs.metz.sh">Manual</a>
-	.
-	<a href="https://app.metz.sh">App</a>
+	·
+	<a href="https://metz.sh">Home</a>
 </p>
 
 <br/>
