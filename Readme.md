@@ -133,3 +133,9 @@ yarn storybook
 This will start running the storybook app on port `6006`. Head over to [http://localhost:6006](http://localhost:6006) to access all stories.
 
 
+## Next Steps
+Check out the [manual](https://docs.metz.sh) to dig deep into the fundamental concepts and inner workings.
+
+Feel free to join our [slack](https://metzcommunity.slack.com/join/shared_invite/zt-1xr4ooes0-AhIP47ENEqrKmnfpCw6e8Q#/shared-invite/email) if you have any question.
+
+Or simply start playing with it in the [playground](https://try.metz.sh)!
