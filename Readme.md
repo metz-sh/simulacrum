@@ -57,7 +57,7 @@ class Poller {
 
 }
 ```
-Check out the how it renders and the full example [here](https://app.metz.sh/template/4).
+Check out how it renders and the full example [here](https://app.metz.sh/template/4).
 
 ## How does it work?
 It's a react component with an IDE, a compiler and a runtime all working together.
