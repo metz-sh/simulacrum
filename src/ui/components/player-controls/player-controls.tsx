@@ -19,6 +19,7 @@ import RenderIfAllowedComponent from '../render-if-allowed/render-if-allowed.com
 import { HiCpuChip } from 'react-icons/hi2';
 import PopoverDropdownHolderComponent from '../popover-dropdown-holder/popover-dropdown-holder.component';
 import RuntimeConsoleComponent from '../runtime-console/runtime-console.component';
+import { motion } from 'framer-motion';
 
 const selector = (state: StoryState) => ({
 	flowPlayerProps: state.flowPlayerProps,
@@ -147,7 +148,32 @@ function ControlButtons(props: {
 						emitAnalyticsEvent('flow.played');
 					}}
 				>
-					{isAuto(flowPlayerProps) ? <FaPause /> : <FaPlay />}
+					{isAuto(flowPlayerProps) ? (
+						<FaPause color="teal" />
+					) : (
+						<motion.div
+							style={{
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center',
+							}}
+							animate={
+								isFinished || isDisabled
+									? {}
+									: {
+											y: -2,
+										}
+							}
+							transition={{
+								duration: 0.1,
+								type: 'spring',
+								bounce: 1,
+								damping: 0,
+							}}
+						>
+							<FaPlay color={isFinished || isDisabled ? 'default' : 'orange'} />
+						</motion.div>
+					)}
 				</Button>
 			</TipComponent>
 			<TipComponent text="Step through">

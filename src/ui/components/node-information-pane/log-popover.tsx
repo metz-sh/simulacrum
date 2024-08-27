@@ -6,6 +6,8 @@ import { useDisclosure } from '@mantine/hooks';
 import * as lodash from 'lodash';
 import LogContainer from './log-container';
 import { MethodNodeData, NodeSignalState } from '../reactflow/models';
+import ButtonComponent from '../button/button.component';
+import { FaPlay } from 'react-icons/fa';
 
 const useStyles = createStyles((theme) => ({
 	dropdown: {
@@ -80,10 +82,18 @@ export default function (props: { data: MethodNodeData; children: React.ReactNod
 					<Flex gap={20} mt={20}>
 						{logs && logs.map((l, index) => <LogContainer key={index} {...l} />)}
 					</Flex>
-					{/* <Divider variant='dashed' orientation='horizontal' mt={20} mb={10} /> */}
-					<Text color="#666" fz={10} mt={20}>
-						Press 'play' to resume
-					</Text>
+					<Divider orientation="horizontal" mt={20} mb={20} />
+					<Flex p={5} justify={'start'} align={'center'}>
+						<ButtonComponent
+							icon={<FaPlay />}
+							onClick={(e) => {
+								e.stopPropagation();
+								setFlowPlayerMode('auto');
+							}}
+						>
+							Continue
+						</ButtonComponent>
+					</Flex>
 				</Box>
 			</Popover.Dropdown>
 		</Popover>
