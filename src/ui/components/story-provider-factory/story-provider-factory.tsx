@@ -11,6 +11,19 @@ import { useCommands } from '../../commands/use-command.hook';
 import { NodeData } from '../reactflow/models';
 import { StoreApi } from 'zustand';
 import { PlaygroundViewFlags } from '../../ui-types';
+import ErrorRenderer from '../error-renderer';
+
+type BootState =
+	| {
+			state: 'loading';
+	  }
+	| {
+			state: 'loaded';
+	  }
+	| {
+			state: 'errored';
+			error: Error;
+	  };
 
 export default memo(function StoryProviderFactory(props: {
 	projectName: string;
@@ -31,7 +44,9 @@ export default memo(function StoryProviderFactory(props: {
 		props.story.getState().id,
 		build
 	);
-	const [isLoaded, setIsLoaded] = useState(false);
+	const [bootState, setBootState] = useState<BootState>({
+		state: 'loading',
+	});
 
 	const {
 		stories: { hydrateStoryScriptFromStore },
@@ -49,11 +64,18 @@ export default memo(function StoryProviderFactory(props: {
 				.getState()
 				.setResolutionAndRefreshPrimordials(props.story.getState().resolution);
 
-			setIsLoaded(true);
-		})();
+			setBootState({
+				state: 'loaded',
+			});
+		})().catch((error) => {
+			setBootState({
+				state: 'errored',
+				error,
+			});
+		});
 	}, []);
 
-	if (!isLoaded) {
+	if (bootState.state === 'loading') {
 		return (
 			<LoadingOverlay
 				loaderProps={{ size: 'md', color: 'white', variant: 'oval' }}
@@ -62,6 +84,10 @@ export default memo(function StoryProviderFactory(props: {
 				overlayColor="rgb(6,6,12)"
 			/>
 		);
+	}
+
+	if (bootState.state === 'errored') {
+		return <ErrorRenderer error={bootState.error} />;
 	}
 
 	return (

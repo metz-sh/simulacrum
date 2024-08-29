@@ -31,6 +31,7 @@ import { getStoryStore } from '../../commands/get-stores.util';
 import ResolutionSliderComponent from '../resolution-slider/resolution-slider.component';
 import { shallow } from 'zustand/shallow';
 import { PlaygroundViewFlags } from '../../ui-types';
+import ErrorRenderer from '../error-renderer';
 
 function focus(
 	reactFlowInstance: ReactFlowInstance,
@@ -62,12 +63,22 @@ const selector = (state: StoryState) => ({
 	id: state.id,
 	script: state.script,
 	getActiveNodes: state.getActiveNodes,
+	runtimeError: state.runtimeError,
 });
 
 function Story(props: { namespace: string; height?: string; viewFlags?: PlaygroundViewFlags }) {
 	const { toggle, fullscreen, ref } = useFullscreen();
-	const { nodes, edges, onEdgesChange, onNodesChange, onConnect, script, id, getActiveNodes } =
-		useStory(selector, shallow);
+	const {
+		nodes,
+		edges,
+		onEdgesChange,
+		onNodesChange,
+		onConnect,
+		script,
+		id,
+		getActiveNodes,
+		runtimeError,
+	} = useStory(selector, shallow);
 	const hostStore = useContext(HostContext);
 	if (!hostStore) {
 		throw new Error('story component needs to be under Host context!');
@@ -96,6 +107,10 @@ function Story(props: { namespace: string; height?: string; viewFlags?: Playgrou
 	const {
 		node: { setNodePosition },
 	} = useCommands();
+
+	if (runtimeError) {
+		return <ErrorRenderer error={runtimeError} />;
+	}
 
 	return (
 		<>

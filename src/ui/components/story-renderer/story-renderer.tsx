@@ -1,4 +1,4 @@
-import { LoadingOverlay, Tabs, createStyles } from '@mantine/core';
+import { Box, LoadingOverlay, Tabs, createStyles } from '@mantine/core';
 import UnBuiltFlow from './unbuilt-flow';
 import { CodeDaemonState } from '../../state-managers/code-daemon/code-daemon-types';
 import { useEffect, useState } from 'react';
@@ -62,7 +62,7 @@ function _StoryRenderer(props: {
 	const activeStory = stories[activeStoryId].getState();
 
 	return (
-		<Tabs keepMounted value={activeStoryId}>
+		<Tabs keepMounted value={activeStoryId} w={'100%'} h={'100%'}>
 			<ConditionalRenderer
 				conditional={() => {
 					if (props.viewFlags?.minimal) {
@@ -75,9 +75,9 @@ function _StoryRenderer(props: {
 					);
 				}}
 			/>
-			<div>
+			<Box w={'100%'} h={'100%'}>
 				{Object.keys(stories).map((storyId, index) => (
-					<Tabs.Panel value={storyId} key={index}>
+					<Tabs.Panel value={storyId} key={index} w={'100%'} h={'100%'}>
 						<StoryContext.Provider value={stories[storyId]}>
 							<FlowProviderFactory
 								namespace={storyId}
@@ -90,7 +90,7 @@ function _StoryRenderer(props: {
 						</StoryContext.Provider>
 					</Tabs.Panel>
 				))}
-			</div>
+			</Box>
 		</Tabs>
 	);
 }
@@ -103,6 +103,15 @@ export default function StoryRenderer(props: {
 }) {
 	const { stories } = useStories((state) => ({ stories: state.stories }));
 	const isEditMode = useHost((state) => state.isEditMode);
+
+	useEffect(() => {
+		return () => {
+			for (const id in stories) {
+				const story = stories[id];
+				story.getState().unmount();
+			}
+		};
+	}, []);
 
 	const {
 		stories: { addStoryAndSubscribe },

@@ -94,6 +94,11 @@ export type StoryState = {
 
 	setEdgeData: (id: string, data: Partial<EdgeData>) => void;
 
+	runtimeError?: Error;
+	setRuntimeError: (error: Error | undefined) => void;
+
+	unmount: () => void;
+
 	errors: unknown[];
 	setErrors: (errors: unknown[]) => void;
 
@@ -650,6 +655,19 @@ export const createStoryStore = (
 					resolution,
 				});
 				setPrimordials(layoutedNodes, edges);
+			},
+
+			setRuntimeError(error) {
+				set({
+					runtimeError: error,
+				});
+			},
+
+			unmount() {
+				get().setRuntimeError(undefined);
+				get().renderTokens = [1];
+				get().flowPlayerProps = { speed: '1x', mode: 'manual' };
+				get().isFinished = false;
 			},
 		}))
 	);

@@ -26,7 +26,7 @@ const useStyles = createStyles((theme) => ({
 export default function (props: {
 	sourceCode: SourceCode;
 	files: SourceCode[];
-	onBuild: (transpiledCode: string, tsCode: string) => void;
+	onBuild: (transpiledCode: string, tsCode: string) => Promise<void>;
 	height?: string;
 }) {
 	const { classes } = useStyles();
@@ -109,7 +109,7 @@ export default function (props: {
 								}
 
 								const compiledCode = ts.transpile(scriptValue);
-								props.onBuild(compiledCode, scriptValue);
+								await props.onBuild(compiledCode, scriptValue);
 								setIsLoading(false);
 							} catch (error: any) {
 								setBuild({
