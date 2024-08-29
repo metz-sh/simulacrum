@@ -74,11 +74,13 @@ export default function (props: { renderEngine: RenderEngine }) {
 		script,
 		id: storyId,
 		title: storyTitle,
+		setRuntimeError,
 	} = useStory((state) => ({
 		stores: state.stores,
 		script: state.script,
 		id: state.id,
 		title: state.title,
+		setRuntimeError: state.setRuntimeError,
 	}));
 	const { isOpen } = useStoryScriptModal();
 
@@ -93,18 +95,21 @@ export default function (props: { renderEngine: RenderEngine }) {
 	} = useCommands();
 
 	const build = async (compiledCode: string, tsCode: string) => {
-		const script = {
-			raw: tsCode,
-			compiled: compiledCode,
-		};
-		setScript({
-			storyId: storyId,
-			script,
-		});
-		reset({ storyId: storyId, renderEngine: props.renderEngine });
-
 		closeStoryScriptModal(storyId);
 		emitAnalyticsEvent('story-script.built');
+		try {
+			const script = {
+				raw: tsCode,
+				compiled: compiledCode,
+			};
+			setScript({
+				storyId: storyId,
+				script,
+			});
+			await reset({ storyId: storyId, renderEngine: props.renderEngine });
+		} catch (error) {
+			setRuntimeError(error as any);
+		}
 	};
 
 	const updateStoryTitle = (title?: string) => {

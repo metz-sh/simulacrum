@@ -9,14 +9,14 @@ export default function (props: {
 	reactFlowInstance: ReactFlowInstance;
 }) {
 	const [drawCount, setDrawCount] = useState(0);
-	const { consumeRenderToken, flowPlayerProps, isFinished, returnRenderToken } = useStory(
-		(state) => ({
+	const { consumeRenderToken, flowPlayerProps, isFinished, returnRenderToken, setRuntimeError } =
+		useStory((state) => ({
 			consumeRenderToken: state.consumeRenderToken,
 			returnRenderToken: state.returnRenderToken,
 			flowPlayerProps: state.flowPlayerProps,
 			isFinished: state.isFinished,
-		})
-	);
+			setRuntimeError: state.setRuntimeError,
+		}));
 	useEffect(() => {
 		if (isFinished) {
 			return;
@@ -33,7 +33,7 @@ export default function (props: {
 			await props.renderEngine.render(token);
 			returnRenderToken(token);
 			setDrawCount(drawCount + 1);
-		})();
+		})().catch(setRuntimeError);
 	}, [drawCount, flowPlayerProps.mode, isFinished]);
 
 	useEffect(() => {
@@ -45,7 +45,7 @@ export default function (props: {
 			}
 			await props.renderEngine.render(token);
 			returnRenderToken(token);
-		})();
+		})().catch(setRuntimeError);
 	}, []);
 
 	return <></>;

@@ -32,6 +32,7 @@ const selector = (state: StoryState) => ({
 	id: state.id,
 	consumeRenderToken: state.consumeRenderToken,
 	returnRenderToken: state.returnRenderToken,
+	setRuntimeError: state.setRuntimeError,
 });
 
 function isAuto(flowPlayerProps: FlowPlayerProps) {
@@ -52,6 +53,7 @@ function ControlButtons(props: {
 		id: storyId,
 		consumeRenderToken,
 		returnRenderToken,
+		setRuntimeError,
 	} = useStory(selector);
 
 	const {
@@ -121,7 +123,7 @@ function ControlButtons(props: {
 						reset({
 							storyId,
 							renderEngine: props.renderEngine,
-						});
+						}).catch(setRuntimeError);
 						emitAnalyticsEvent('flow.reset');
 					}}
 				>
@@ -187,9 +189,11 @@ function ControlButtons(props: {
 							console.error('Tried rendering but no token');
 							return;
 						}
-						props.renderEngine.render(token);
-						returnRenderToken(token);
-						emitAnalyticsEvent('flow.stepped_through');
+						(async () => {
+							emitAnalyticsEvent('flow.stepped_through');
+							await props.renderEngine.render(token);
+							returnRenderToken(token);
+						})().catch(setRuntimeError);
 					}}
 				>
 					<BsSkipEndFill />
