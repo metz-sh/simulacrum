@@ -4,7 +4,7 @@ import PrettyPaperComponent from './pretty-paper/pretty-paper.component';
 export default function (props: { error: Error }) {
 	return (
 		<Flex w={'100%'} h={'100%'} justify={'center'} align={'center'}>
-			<PrettyPaperComponent w={'80%'}>
+			<PrettyPaperComponent w={'60%'} mah={'50vh'} sx={{ overflow: 'scroll' }}>
 				<Box>
 					<Text color="red" ff={'Fira Mono'} fw={500}>
 						{props.error.message}
