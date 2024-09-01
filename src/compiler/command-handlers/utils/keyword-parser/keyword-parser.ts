@@ -251,11 +251,11 @@ export class KeywordParser {
 		if (!this.checker) {
 			return;
 		}
-		const comments = ts.displayPartsToString(
-			this.checker
-				.getSymbolAtLocation(node.name || node)!
-				.getDocumentationComment(this.checker)
-		);
+		const symbol = this.checker.getSymbolAtLocation(node.name || node);
+		if (!symbol) {
+			return;
+		}
+		const comments = ts.displayPartsToString(symbol.getDocumentationComment(this.checker));
 		return comments;
 	}
 
