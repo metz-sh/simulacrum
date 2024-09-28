@@ -1,4 +1,15 @@
 # Simulacrum
+![Github Cover Twitter Header](https://github.com/user-attachments/assets/20ddbdbf-5f2f-4381-9f9e-47523774ed25)
+<p align="center">
+	<a href="https://try.metz.sh">Try in Playground</a>
+	·
+	<a href="https://docs.metz.sh">Docs</a>
+	·
+	<a href="https://metz.sh">Home</a>
+	·
+	<a href="https://wiki-metz.notion.site/Simulacrum-Wiki-ca581b8e04154e29bb099db5dd90c5db">Wiki</a>
+</p>
+
 It's a react based code playground, where you can write TypeScript code and the bundled runtime will execute that code visually. 
 <br/>It's a self sustained package and doesn't need any server. All the compilation and execution happens in the browser itself
 
@@ -9,16 +20,6 @@ With `simulacrum`, you design using code. And you write code only to solve the d
 
 
 https://github.com/user-attachments/assets/18c34417-b822-4af5-a133-213075acf68b
-
-
-<p align="center">
-	<a href="https://try.metz.sh">Try in Playground</a>
-	·
-	<a href="https://docs.metz.sh">Docs</a>
-	·
-	<a href="https://metz.sh">Home</a>
-</p>
-
 
 
 ## Mental Model
