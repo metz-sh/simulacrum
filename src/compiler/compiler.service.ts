@@ -1,3 +1,4 @@
+import libs from './libs.json';
 import {
 	CompilerCommand,
 	CompilerCommandEvent,
@@ -6,10 +7,7 @@ import {
 	CompilerResponse,
 	CompilerResponseCode,
 } from './compiler-types';
-import { createDefaultMapFromCDN } from '@typescript/vfs';
-import * as ts from 'typescript';
 import { decodeToMap } from '../ui/services/map-converter';
-import compilerOptions, { bannedDefinitions } from './compiler-options';
 import { getFSPayload } from './utils/get-message-payload';
 
 export class CompilerService {
@@ -17,7 +15,7 @@ export class CompilerService {
 	private worker = new Worker(new URL('./compiler.worker.ts', import.meta.url), {
 		type: 'module',
 	});
-	libsFsMap: Map<string, string> = new Map();
+	libsFs = libs as [string, string][];
 
 	constructor(
 		private readonly projectName: string,
@@ -30,17 +28,11 @@ export class CompilerService {
 			errors: CompilerErrors;
 		}) => void
 	) {
-		this.initializeLibsFs()
-			.then((libsFsMap) => {
-				this.sendCommand({
-					command: CompilerCommand.INIT,
-					fs: libsFsMap!,
-				});
-				this.libsFsMap = libsFsMap;
-			})
-			.catch((e) => {
-				throw new Error(e);
-			});
+		const libsFsMap = this.parseLibs();
+		this.sendCommand({
+			command: CompilerCommand.INIT,
+			fs: libsFsMap,
+		});
 
 		this.worker.onmessage = (event: MessageEvent<CompilerResponse>) => {
 			if (event.data.responseCode === CompilerResponseCode.INITIALIZED) {
@@ -74,10 +66,14 @@ export class CompilerService {
 		};
 	}
 
-	private async initializeLibsFs() {
-		const result = await createDefaultMapFromCDN(compilerOptions, '5.0.2', true, ts);
-		bannedDefinitions.forEach((def) => result.delete(def));
-		return result;
+	private parseLibs(): Map<string, string> {
+		const libsFsMap = new Map<string, string>();
+		for (const lib of libs) {
+			const [file, value] = lib;
+			libsFsMap.set(file, value);
+		}
+
+		return libsFsMap;
 	}
 
 	sendCompileCommand(fs: Map<string, string>) {
