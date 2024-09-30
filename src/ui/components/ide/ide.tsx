@@ -140,11 +140,11 @@ export default function (props: { height?: string }) {
 		if (isCompilerServiceReady && !compilerService) {
 			throw new Error('Signal says ready but found no compiler service!');
 		}
-		const libsFsMap = compilerService!.libsFsMap;
-		const definitions = Array.from(libsFsMap, ([filePath, content]) => ({
+		const libsFs = compilerService!.libsFs;
+		const definitions = Array.from(libsFs, ([filePath, content]) => ({
 			filePath,
 			content,
-		})).filter(({ filePath }) => !bannedDefinitions.includes(filePath));
+		}));
 		addDefinitionsToMonaco(definitions);
 	}, [isCompilerServiceReady]);
 

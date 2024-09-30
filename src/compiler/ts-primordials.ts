@@ -1,5 +1,5 @@
 import * as ts from 'typescript';
-import { createSystem, createVirtualCompilerHost, createDefaultMapFromCDN } from '@typescript/vfs';
+import { createSystem, createVirtualCompilerHost } from '@typescript/vfs';
 import compilerOptions from './compiler-options';
 
 export class TSPrimordials {
