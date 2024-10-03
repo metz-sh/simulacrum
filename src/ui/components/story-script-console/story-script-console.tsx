@@ -1,6 +1,6 @@
 import { Grid, createStyles } from '@mantine/core';
 import { SourceCode } from '../../models/source-code';
-import { Editor, useMonaco } from '@monaco-editor/react';
+import { Editor, Monaco } from '@monaco-editor/react';
 import { useEffect, useRef, useState } from 'react';
 import { TbPlaystationSquare } from 'react-icons/tb';
 import { CodeDaemonState } from '../../state-managers/code-daemon/code-daemon-types';
@@ -30,7 +30,7 @@ export default function (props: {
 	height?: string;
 }) {
 	const { classes } = useStyles();
-	const monaco = useMonaco();
+	const [monacoRef, setMonacoRef] = useState<Monaco>();
 	const editor = useRef<any>(null);
 
 	const emitAnalyticsEvent = useHost((state) => state.emitAnalyticsEvent);
@@ -39,19 +39,20 @@ export default function (props: {
 	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
-		if (monaco) {
-			for (const file of [props.sourceCode, ...props.files]) {
-				const { path, value } = file;
-				const uri = monaco.Uri.parse(path);
-				const existingModel = monaco.editor.getModel(uri);
-				if (existingModel) {
-					existingModel.setValue(value);
-					return;
-				}
-				monaco.editor.createModel(value, 'typescript', monaco.Uri.parse(path));
-			}
+		if (!monacoRef) {
+			return;
 		}
-	}, [monaco]);
+		for (const file of [props.sourceCode, ...props.files]) {
+			const { path, value } = file;
+			const uri = monacoRef.Uri.parse(path);
+			const existingModel = monacoRef.editor.getModel(uri);
+			if (existingModel) {
+				existingModel.setValue(value);
+				return;
+			}
+			monacoRef.editor.createModel(value, 'typescript', monacoRef.Uri.parse(path));
+		}
+	}, [monacoRef]);
 
 	function handleEditorDidMount(editorRef: any) {
 		editor.current = editorRef;
@@ -72,10 +73,10 @@ export default function (props: {
 						icon={<TbPlaystationSquare size={'18px'} />}
 						loading={isLoading}
 						onClick={async () => {
-							if (!monaco) {
+							if (!monacoRef) {
 								throw new Error('monaco not ready!');
 							}
-							const errors = await getErrorsFromMonacoInstance(monaco);
+							const errors = await getErrorsFromMonacoInstance(monacoRef);
 							if (errors.length) {
 								setBuild({
 									state: 'errored',
@@ -88,8 +89,8 @@ export default function (props: {
 							try {
 								setIsLoading(true);
 								const { path: scriptPath } = props.sourceCode;
-								const uri = monaco!.Uri.parse(scriptPath);
-								const scriptValue = monaco!.editor.getModel(uri)!.getValue();
+								const uri = monacoRef!.Uri.parse(scriptPath);
+								const scriptValue = monacoRef!.editor.getModel(uri)!.getValue();
 
 								const sourceFile = ts.createSourceFile(
 									'story-script.ts',
@@ -148,6 +149,9 @@ export default function (props: {
 							},
 							overviewRulerLanes: 0,
 							lineNumbersMinChars: 2,
+						}}
+						beforeMount={(monaco) => {
+							setMonacoRef(monaco);
 						}}
 						onMount={handleEditorDidMount}
 					/>
