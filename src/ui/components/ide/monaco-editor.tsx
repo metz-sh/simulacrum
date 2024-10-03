@@ -1,6 +1,6 @@
-import { Editor, OnChange, useMonaco } from '@monaco-editor/react';
+import { Editor, Monaco, OnChange } from '@monaco-editor/react';
 import { shallow } from 'zustand/shallow';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useCodeDaemon } from '../../state-managers/code-daemon/code-daemon.store';
 import * as theme from './theme.json';
 import { useCommands } from '../../commands/use-command.hook';
@@ -11,7 +11,7 @@ import injectableTemplate from '../../../std/completion-templates/injectable-tem
 import compilerOptions from '../../../compiler/compiler-options';
 
 export default function (props: { onChange: OnChange }) {
-	const monaco = useMonaco();
+	const [monacoRef, setMonacoRef] = useState<Monaco>();
 	const { useProject, useIDE, stores } = useCodeDaemon(
 		(state) => ({ useProject: state.useProject, useIDE: state.useIDE, stores: state.stores }),
 		shallow
@@ -37,68 +37,70 @@ export default function (props: { onChange: OnChange }) {
 	} = useCommands();
 
 	useEffect(() => {
-		if (monaco) {
-			monaco.editor.defineTheme('theme', theme as any);
-			monaco.editor.setTheme('theme');
-			monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
-				...(compilerOptions as any),
-				noLib: true,
-			});
-
-			setMonaco(monaco);
-			syncMonacoModels();
-
-			const { dispose } = monaco.languages.registerCompletionItemProvider('typescript', {
-				provideCompletionItems(model, position, context, token) {
-					const word = model.getWordUntilPosition(position);
-					const range = {
-						startLineNumber: position.lineNumber,
-						endLineNumber: position.lineNumber,
-						startColumn: word.startColumn,
-						endColumn: word.endColumn,
-					};
-					return {
-						suggestions: [
-							{
-								label: 'table',
-								insertText: tableTemplate,
-								documentation: `Creates a new class representing a relational db table`,
-
-								kind: monaco.languages.CompletionItemKind.Function,
-								range,
-							},
-							{
-								label: 'collection',
-								insertText: collectionTemplate,
-								documentation: `Creates a new class representing a NoSQL collection`,
-
-								kind: monaco.languages.CompletionItemKind.Function,
-								range,
-							},
-							{
-								label: 'keyvalue',
-								insertText: keyvalueTemplate,
-								documentation: `Creates a new class representing a KeyValue store`,
-
-								kind: monaco.languages.CompletionItemKind.Function,
-								range,
-							},
-							{
-								label: 'service',
-								insertText: injectableTemplate,
-								documentation: `Creates a new class representing a Service`,
-
-								kind: monaco.languages.CompletionItemKind.Function,
-								range,
-							},
-						],
-					};
-				},
-			});
-
-			return dispose;
+		if (!monacoRef) {
+			return;
 		}
-	}, [monaco]);
+
+		monacoRef.editor.defineTheme('theme', theme as any);
+		monacoRef.editor.setTheme('theme');
+		monacoRef.languages.typescript.typescriptDefaults.setCompilerOptions({
+			...(compilerOptions as any),
+			noLib: true,
+		});
+
+		setMonaco(monacoRef);
+		syncMonacoModels();
+
+		const { dispose } = monacoRef.languages.registerCompletionItemProvider('typescript', {
+			provideCompletionItems(model, position, context, token) {
+				const word = model.getWordUntilPosition(position);
+				const range = {
+					startLineNumber: position.lineNumber,
+					endLineNumber: position.lineNumber,
+					startColumn: word.startColumn,
+					endColumn: word.endColumn,
+				};
+				return {
+					suggestions: [
+						{
+							label: 'table',
+							insertText: tableTemplate,
+							documentation: `Creates a new class representing a relational db table`,
+
+							kind: monacoRef.languages.CompletionItemKind.Function,
+							range,
+						},
+						{
+							label: 'collection',
+							insertText: collectionTemplate,
+							documentation: `Creates a new class representing a NoSQL collection`,
+
+							kind: monacoRef.languages.CompletionItemKind.Function,
+							range,
+						},
+						{
+							label: 'keyvalue',
+							insertText: keyvalueTemplate,
+							documentation: `Creates a new class representing a KeyValue store`,
+
+							kind: monacoRef.languages.CompletionItemKind.Function,
+							range,
+						},
+						{
+							label: 'service',
+							insertText: injectableTemplate,
+							documentation: `Creates a new class representing a Service`,
+
+							kind: monacoRef.languages.CompletionItemKind.Function,
+							range,
+						},
+					],
+				};
+			},
+		});
+
+		return dispose;
+	}, [monacoRef]);
 
 	useEffect(() => {
 		syncMonacoModels();
@@ -126,6 +128,9 @@ export default function (props: { onChange: OnChange }) {
 				},
 				overviewRulerLanes: 0,
 				lineNumbersMinChars: 2,
+			}}
+			beforeMount={(monaco) => {
+				setMonacoRef(monaco);
 			}}
 			onMount={setEditor}
 			onChange={props.onChange}
