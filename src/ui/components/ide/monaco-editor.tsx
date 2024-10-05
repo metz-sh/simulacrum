@@ -1,8 +1,9 @@
 import { Editor, OnChange, useMonaco } from '@monaco-editor/react';
 import { shallow } from 'zustand/shallow';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useCodeDaemon } from '../../state-managers/code-daemon/code-daemon.store';
 import * as theme from './theme.json';
+import * as lightTheme from './theme-light.json';
 import { useCommands } from '../../commands/use-command.hook';
 import tableTemplate from '../../../std/completion-templates/table-template';
 import collectionTemplate from '../../../std/completion-templates/collection-template';
@@ -36,10 +37,27 @@ export default function (props: { onChange: OnChange }) {
 		ide: { refreshIDE, syncMonacoModels, getActiveFile },
 	} = useCommands();
 
+	// Add a state for theme (light/dark)
+	const savedTheme = (localStorage.getItem('editorTheme') as 'dark' | 'light') || 'dark';
+	const [currentTheme, setCurrentTheme] = useState<'dark' | 'light'>(savedTheme);
+
+	// Function to toggle between light and dark themes
+	const toggleTheme = () => {
+		setCurrentTheme((prevTheme) => {
+			const newTheme = prevTheme === 'dark' ? 'light' : 'dark';
+			localStorage.setItem('editorTheme', newTheme); // Save the new theme to localStorage
+			return newTheme; // Return the new theme
+		});
+	};
+
 	useEffect(() => {
 		if (monaco) {
 			monaco.editor.defineTheme('theme', theme as any);
-			monaco.editor.setTheme('theme');
+			monaco.editor.defineTheme('lightTheme', lightTheme as any);
+
+			monaco.editor.setTheme(currentTheme === 'dark' ? 'theme' : 'lightTheme');
+			localStorage.setItem('editorTheme', currentTheme);
+
 			monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
 				...(compilerOptions as any),
 				noLib: true,
@@ -98,7 +116,7 @@ export default function (props: { onChange: OnChange }) {
 
 			return dispose;
 		}
-	}, [monaco]);
+	}, [monaco, currentTheme]);
 
 	useEffect(() => {
 		syncMonacoModels();
@@ -109,26 +127,46 @@ export default function (props: { onChange: OnChange }) {
 	}, [activeFilePath]);
 
 	const activeFile = getActiveFile();
+
 	return (
-		<Editor
-			theme="theme"
-			height="100%"
-			width="100%"
-			language="typescript"
-			value={activeFile?.content}
-			path={activeFile?.fullPath || 'empty.ts'}
-			options={{
-				fontSize: 18,
-				fontWeight: '500',
-				fontFamily: 'Fira Mono',
-				minimap: {
-					enabled: false,
-				},
-				overviewRulerLanes: 0,
-				lineNumbersMinChars: 2,
-			}}
-			onMount={setEditor}
-			onChange={props.onChange}
-		/>
+		<>
+			<div style={{ position: 'absolute', zIndex: 1000 }}>
+				<select
+					value={currentTheme}
+					onChange={() => toggleTheme()}
+					style={{
+						padding: '2px 8px 2px 8px',
+						borderRadius: '0px 0px 4px 4px',
+						border: '1px solid #ccc',
+						backgroundColor: currentTheme === 'dark' ? '#000' : '#fff',
+						color: currentTheme === 'dark' ? '#fff' : '#000',
+					}}
+				>
+					<option value="dark">Dark Theme</option>
+					<option value="light">Light Theme</option>
+				</select>
+			</div>
+
+			<Editor
+				theme="theme"
+				height="100%"
+				width="100%"
+				language="typescript"
+				value={activeFile?.content}
+				path={activeFile?.fullPath || 'empty.ts'}
+				options={{
+					fontSize: 18,
+					fontWeight: '500',
+					fontFamily: 'Fira Mono',
+					minimap: {
+						enabled: false,
+					},
+					overviewRulerLanes: 0,
+					lineNumbersMinChars: 2,
+				}}
+				onMount={setEditor}
+				onChange={props.onChange}
+			/>
+		</>
 	);
 }
