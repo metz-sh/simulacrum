@@ -41,12 +41,11 @@ export default function (props: { onChange: OnChange }) {
 	const savedTheme = (localStorage.getItem('editorTheme') as 'dark' | 'light') || 'dark';
 	const [currentTheme, setCurrentTheme] = useState<'dark' | 'light'>(savedTheme);
 
-	// Function to toggle between light and dark themes
 	const toggleTheme = () => {
 		setCurrentTheme((prevTheme) => {
 			const newTheme = prevTheme === 'dark' ? 'light' : 'dark';
 			localStorage.setItem('editorTheme', newTheme); // Save the new theme to localStorage
-			return newTheme; // Return the new theme
+			return newTheme;
 		});
 	};
 
@@ -61,7 +60,6 @@ export default function (props: { onChange: OnChange }) {
 		monacoRef.editor.setTheme(currentTheme === 'dark' ? 'theme' : 'lightTheme');
 		localStorage.setItem('editorTheme', currentTheme);
 
-		monacoRef.editor.setTheme('theme');
 		monacoRef.languages.typescript.typescriptDefaults.setCompilerOptions({
 			...(compilerOptions as any),
 			noLib: true,
