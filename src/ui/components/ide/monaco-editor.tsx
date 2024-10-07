@@ -2,14 +2,16 @@ import { Editor, Monaco, OnChange } from '@monaco-editor/react';
 import { shallow } from 'zustand/shallow';
 import { useEffect, useState } from 'react';
 import { useCodeDaemon } from '../../state-managers/code-daemon/code-daemon.store';
-import * as theme from './theme.json';
-import * as lightTheme from './theme-light.json';
 import { useCommands } from '../../commands/use-command.hook';
 import tableTemplate from '../../../std/completion-templates/table-template';
 import collectionTemplate from '../../../std/completion-templates/collection-template';
 import keyvalueTemplate from '../../../std/completion-templates/keyvalue-template';
 import injectableTemplate from '../../../std/completion-templates/injectable-template';
 import compilerOptions from '../../../compiler/compiler-options';
+import ThemeSwitcher from './theme-manager/theme-switcher';
+import ThemeManager from './theme-manager/theme-manager';
+import useThemeStore from './theme-manager/theme.store';
+import { Theme } from './theme-manager/themes/theme.interface';
 
 export default function (props: { onChange: OnChange }) {
 	const [monacoRef, setMonacoRef] = useState<Monaco>();
@@ -37,28 +39,27 @@ export default function (props: { onChange: OnChange }) {
 		ide: { refreshIDE, syncMonacoModels, getActiveFile },
 	} = useCommands();
 
-	// Add a state for theme (light/dark)
-	const savedTheme = (localStorage.getItem('editorTheme') as 'dark' | 'light') || 'dark';
-	const [currentTheme, setCurrentTheme] = useState<'dark' | 'light'>(savedTheme);
-
-	const toggleTheme = () => {
-		setCurrentTheme((prevTheme) => {
-			const newTheme = prevTheme === 'dark' ? 'light' : 'dark';
-			localStorage.setItem('editorTheme', newTheme); // Save the new theme to localStorage
-			return newTheme;
+	// use Effect for theme control
+	const { currentTheme } = useThemeStore();
+	useEffect(() => {
+		if (!monacoRef) return;
+		ThemeManager.getAllThemes().forEach((theme) => {
+			monacoRef.editor.defineTheme(theme.slug, theme.getJson() as any);
 		});
-	};
+
+		monacoRef.editor.setTheme(
+			currentTheme.slug === 'dark-theme' ? 'dark-theme' : 'light-theme'
+		);
+	}, [monacoRef, currentTheme]);
 
 	useEffect(() => {
 		if (!monacoRef) {
 			return;
 		}
 
-		monacoRef.editor.defineTheme('theme', theme as any);
-		monacoRef.editor.defineTheme('lightTheme', lightTheme as any);
-
-		monacoRef.editor.setTheme(currentTheme === 'dark' ? 'theme' : 'lightTheme');
-		localStorage.setItem('editorTheme', currentTheme);
+		// monacoRef.editor.defineTheme('darkTheme', darkTheme as any);
+		// monacoRef.editor.defineTheme('lightTheme', lightTheme as any);
+		// monacoRef.editor.setTheme('darkTheme');
 
 		monacoRef.languages.typescript.typescriptDefaults.setCompilerOptions({
 			...(compilerOptions as any),
@@ -117,7 +118,7 @@ export default function (props: { onChange: OnChange }) {
 		});
 
 		return dispose;
-	}, [monacoRef, currentTheme]);
+	}, [monacoRef]);
 
 	useEffect(() => {
 		syncMonacoModels();
@@ -131,23 +132,7 @@ export default function (props: { onChange: OnChange }) {
 
 	return (
 		<>
-			<div style={{ position: 'absolute', zIndex: 1000 }}>
-				<select
-					value={currentTheme}
-					onChange={() => toggleTheme()}
-					style={{
-						padding: '2px 8px 2px 8px',
-						borderRadius: '0px 0px 4px 4px',
-						border: '1px solid #ccc',
-						backgroundColor: currentTheme === 'dark' ? '#000' : '#fff',
-						color: currentTheme === 'dark' ? '#fff' : '#000',
-					}}
-				>
-					<option value="dark">Dark Theme</option>
-					<option value="light">Light Theme</option>
-				</select>
-			</div>
-
+			<ThemeSwitcher />
 			<Editor
 				theme="theme"
 				height="100%"
