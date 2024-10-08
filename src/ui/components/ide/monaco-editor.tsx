@@ -2,13 +2,16 @@ import { Editor, Monaco, OnChange } from '@monaco-editor/react';
 import { shallow } from 'zustand/shallow';
 import { useEffect, useState } from 'react';
 import { useCodeDaemon } from '../../state-managers/code-daemon/code-daemon.store';
-import * as theme from './theme.json';
 import { useCommands } from '../../commands/use-command.hook';
 import tableTemplate from '../../../std/completion-templates/table-template';
 import collectionTemplate from '../../../std/completion-templates/collection-template';
 import keyvalueTemplate from '../../../std/completion-templates/keyvalue-template';
 import injectableTemplate from '../../../std/completion-templates/injectable-template';
 import compilerOptions from '../../../compiler/compiler-options';
+import ThemeSwitcher from './theme-manager/theme-switcher';
+import ThemeManager from './theme-manager/theme-manager';
+import useThemeStore from './theme-manager/theme.store';
+import { Theme } from './theme-manager/themes/theme.interface';
 
 export default function (props: { onChange: OnChange }) {
 	const [monacoRef, setMonacoRef] = useState<Monaco>();
@@ -36,13 +39,28 @@ export default function (props: { onChange: OnChange }) {
 		ide: { refreshIDE, syncMonacoModels, getActiveFile },
 	} = useCommands();
 
+	// use Effect for theme control
+	const { currentTheme } = useThemeStore();
+	useEffect(() => {
+		if (!monacoRef) return;
+		ThemeManager.getAllThemes().forEach((theme) => {
+			monacoRef.editor.defineTheme(theme.slug, theme.getJson() as any);
+		});
+
+		monacoRef.editor.setTheme(
+			currentTheme.slug === 'dark-theme' ? 'dark-theme' : 'light-theme'
+		);
+	}, [monacoRef, currentTheme]);
+
 	useEffect(() => {
 		if (!monacoRef) {
 			return;
 		}
 
-		monacoRef.editor.defineTheme('theme', theme as any);
-		monacoRef.editor.setTheme('theme');
+		// monacoRef.editor.defineTheme('darkTheme', darkTheme as any);
+		// monacoRef.editor.defineTheme('lightTheme', lightTheme as any);
+		// monacoRef.editor.setTheme('darkTheme');
+
 		monacoRef.languages.typescript.typescriptDefaults.setCompilerOptions({
 			...(compilerOptions as any),
 			noLib: true,
@@ -111,29 +129,33 @@ export default function (props: { onChange: OnChange }) {
 	}, [activeFilePath]);
 
 	const activeFile = getActiveFile();
+
 	return (
-		<Editor
-			theme="theme"
-			height="100%"
-			width="100%"
-			language="typescript"
-			value={activeFile?.content}
-			path={activeFile?.fullPath || 'empty.ts'}
-			options={{
-				fontSize: 18,
-				fontWeight: '500',
-				fontFamily: 'Fira Mono',
-				minimap: {
-					enabled: false,
-				},
-				overviewRulerLanes: 0,
-				lineNumbersMinChars: 2,
-			}}
-			beforeMount={(monaco) => {
-				setMonacoRef(monaco);
-			}}
-			onMount={setEditor}
-			onChange={props.onChange}
-		/>
+		<>
+			<ThemeSwitcher />
+			<Editor
+				theme="theme"
+				height="100%"
+				width="100%"
+				language="typescript"
+				value={activeFile?.content}
+				path={activeFile?.fullPath || 'empty.ts'}
+				options={{
+					fontSize: 18,
+					fontWeight: '500',
+					fontFamily: 'Fira Mono',
+					minimap: {
+						enabled: false,
+					},
+					overviewRulerLanes: 0,
+					lineNumbersMinChars: 2,
+				}}
+				beforeMount={(monaco) => {
+					setMonacoRef(monaco);
+				}}
+				onMount={setEditor}
+				onChange={props.onChange}
+			/>
+		</>
 	);
 }
