@@ -294,6 +294,7 @@ export function Folder(props: {
 					getFolderContextMenu(props.path, {
 						onAddNewClick() {
 							setIsBeingAddedTo(true);
+							setOpened((open) => !open); // change folder open state when adding new file
 						},
 						onDeleteClick() {
 							openConfirmModal({
@@ -338,7 +339,7 @@ export function Folder(props: {
 							label={isBeingRenamed ? renameFolderBox : folderNameBox}
 							childrenOffset={28}
 							classNames={classes}
-							onClick={() => setOpened((o) => !o)}
+							onClick={() => setOpened((o) => !o)} // --- changing folder open state
 							opened={opened}
 							icon={<FiFolder />}
 						>

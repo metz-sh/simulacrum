@@ -156,6 +156,8 @@ export function FileTreeView() {
 					sx={{ overflowY: 'auto', overflowX: 'auto', flex: 1 }}
 					className={classes.fileTree}
 				>
+					{' '}
+					{/* --- File Elements : Folder | File --- */}
 					{fileElements}
 					{isBeingAddedTo && (
 						<AddNew
