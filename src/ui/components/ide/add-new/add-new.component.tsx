@@ -117,6 +117,7 @@ function AddNewInput(props: {
 	);
 }
 
+// folder | file box input name element
 export function AddNew(props: {
 	path: string;
 	onCreate: (params: { path: string; type: 'file' | 'folder' }) => void;

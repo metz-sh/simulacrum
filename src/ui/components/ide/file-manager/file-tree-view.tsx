@@ -1,5 +1,5 @@
-import { Box, createStyles } from '@mantine/core';
 import { useState } from 'react';
+import { Box, createStyles } from '@mantine/core';
 import { useCodeDaemon } from '../../../state-managers/code-daemon/code-daemon.store';
 import { FileSystemNode } from '../../../common/file-system/file-sytem';
 import { Folder } from '../folder/folder';
