@@ -17,10 +17,8 @@ const useStyles = createStyles((theme) => ({
 		padding: `${theme.spacing.xs} ${theme.spacing.xs}`,
 		fontSize: theme.fontSizes.md,
 		fontFamily: 'Fira Mono',
-
 		backgroundColor: '#101016',
 		color: theme.colorScheme === 'dark' ? theme.white : theme.black,
-
 		borderRadius: '5px',
 	},
 }));
@@ -117,6 +115,7 @@ function AddNewInput(props: {
 	);
 }
 
+// folder | file box input name element
 export function AddNew(props: {
 	path: string;
 	onCreate: (params: { path: string; type: 'file' | 'folder' }) => void;
@@ -136,7 +135,6 @@ export function AddNew(props: {
 			setScrolled(true);
 		}, 100);
 	}, []);
-
 	return (
 		<div className={classes.control} ref={targetRef}>
 			<Box sx={{ display: 'flex', alignItems: 'center' }}>

@@ -18,6 +18,7 @@ import { FolderActiveContext } from './folder-active.context';
 import { useHost } from '../../../state-managers/host/host.store';
 import { openConfirmModal } from '../../open-modal/open-confirm-modal';
 
+// may be look into this
 const getFolderContextMenu = (
 	path: string,
 	params: {
@@ -144,8 +145,8 @@ export function Folder(props: {
 	const { classes, theme } = useStyles();
 
 	const [isActive, setIsActive] = useState(false);
+	const [opened, setOpened] = useState(false); // make it independent of isActive state
 
-	const [opened, setOpened] = useState(isActive);
 	const [isBeingAddedTo, setIsBeingAddedTo] = useState(false);
 	const [isBeingRenamed, setIsBeingRenamed] = useState(false);
 	const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
@@ -168,6 +169,7 @@ export function Folder(props: {
 
 	useEffect(() => {
 		if (!isActive) {
+			setOpened(false);
 			return;
 		}
 		setOpened(true);
@@ -175,9 +177,7 @@ export function Folder(props: {
 	}, [isActive]);
 
 	useEffect(() => {
-		if (isBeingAddedTo) {
-			setOpened(true);
-		}
+		if (isBeingAddedTo) setOpened(true);
 	}, [isBeingAddedTo]);
 
 	const getDraggable = () => {
@@ -264,9 +264,6 @@ export function Folder(props: {
 	);
 
 	function getAddNewComponent() {
-		if (!isBeingAddedTo) {
-			return <></>;
-		}
 		return (
 			<AddNew
 				path={props.path}
@@ -294,6 +291,7 @@ export function Folder(props: {
 					getFolderContextMenu(props.path, {
 						onAddNewClick() {
 							setIsBeingAddedTo(true);
+							setOpened(false);
 						},
 						onDeleteClick() {
 							openConfirmModal({
@@ -342,8 +340,12 @@ export function Folder(props: {
 							opened={opened}
 							icon={<FiFolder />}
 						>
-							{getAddNewComponent()}
-							<FolderActiveContext.Provider value={{ setIsActive }}>
+							{isBeingAddedTo && getAddNewComponent()}
+							<FolderActiveContext.Provider
+								value={{
+									setIsActive,
+								}}
+							>
 								{props.children}
 							</FolderActiveContext.Provider>
 						</NavLink>

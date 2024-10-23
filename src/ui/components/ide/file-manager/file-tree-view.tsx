@@ -1,5 +1,5 @@
-import { Box, createStyles } from '@mantine/core';
 import { useState } from 'react';
+import { Box, createStyles } from '@mantine/core';
 import { useCodeDaemon } from '../../../state-managers/code-daemon/code-daemon.store';
 import { FileSystemNode } from '../../../common/file-system/file-sytem';
 import { Folder } from '../folder/folder';
@@ -156,6 +156,8 @@ export function FileTreeView() {
 					sx={{ overflowY: 'auto', overflowX: 'auto', flex: 1 }}
 					className={classes.fileTree}
 				>
+					{' '}
+					{/* --- File Elements : Folder | File --- */}
 					{fileElements}
 					{isBeingAddedTo && (
 						<AddNew
