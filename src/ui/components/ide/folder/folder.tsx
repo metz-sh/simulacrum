@@ -180,12 +180,6 @@ export function Folder(props: {
 		if (isBeingAddedTo) setOpened(true);
 	}, [isBeingAddedTo]);
 
-	useEffect(() => {
-		console.log('IsActive : ', isActive);
-		console.log('Opened : ', opened);
-		console.log('isBeingAddedTo : ', isBeingAddedTo);
-	}, [isActive, opened, isBeingAddedTo]);
-
 	const getDraggable = () => {
 		if (props.path === Settings.rootPath) {
 			return <></>;
@@ -270,7 +264,6 @@ export function Folder(props: {
 	);
 
 	function getAddNewComponent() {
-		console.log('Add new comp called');
 		return (
 			<AddNew
 				path={props.path}
@@ -297,9 +290,8 @@ export function Folder(props: {
 				showContextMenu(
 					getFolderContextMenu(props.path, {
 						onAddNewClick() {
-							console.log('Add new click');
 							setIsBeingAddedTo(true);
-							// setOpened(false);
+							setOpened(false);
 						},
 						onDeleteClick() {
 							openConfirmModal({
@@ -349,7 +341,11 @@ export function Folder(props: {
 							icon={<FiFolder />}
 						>
 							{isBeingAddedTo && getAddNewComponent()}
-							<FolderActiveContext.Provider value={{ setIsActive }}>
+							<FolderActiveContext.Provider
+								value={{
+									setIsActive,
+								}}
+							>
 								{props.children}
 							</FolderActiveContext.Provider>
 						</NavLink>
