@@ -118,6 +118,7 @@ function ControlButtons(props: {
 				<Button
 					size="md"
 					radius={5}
+					aria-label="Reset"
 					disabled={isAuto(flowPlayerProps) || isDisabled}
 					onClick={() => {
 						reset({
@@ -144,6 +145,7 @@ function ControlButtons(props: {
 				<Button
 					size="md"
 					radius={5}
+					aria-label={isAuto(flowPlayerProps) ? 'Pause' : 'Play'}
 					disabled={isFinished || isDisabled}
 					onClick={() => {
 						cycleFlowPlayerMode();
@@ -182,6 +184,7 @@ function ControlButtons(props: {
 				<Button
 					size="md"
 					radius={5}
+					aria-label="Step"
 					disabled={isAuto(flowPlayerProps) || isFinished || isDisabled}
 					onClick={() => {
 						const token = consumeRenderToken();

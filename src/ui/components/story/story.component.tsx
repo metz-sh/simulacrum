@@ -61,6 +61,7 @@ const selector = (state: StoryState) => ({
 	onEdgesChange: state.onEdgesChange,
 	onConnect: state.onConnect,
 	id: state.id,
+	title: state.title,
 	script: state.script,
 	getActiveNodes: state.getActiveNodes,
 	runtimeError: state.runtimeError,
@@ -76,6 +77,7 @@ function Story(props: { namespace: string; height?: string; viewFlags?: Playgrou
 		onConnect,
 		script,
 		id,
+		title,
 		getActiveNodes,
 		runtimeError,
 	} = useStory(selector, shallow);
@@ -119,6 +121,8 @@ function Story(props: { namespace: string; height?: string; viewFlags?: Playgrou
 
 			<RenderDaemonComponent renderEngine={renderEngine} reactFlowInstance={reactFlow} />
 			<div
+				role="region"
+				aria-label={`Story ${title}`}
 				ref={ref}
 				className={fullscreen ? 'flow_fullscreen' : 'flow'}
 				style={props.height ? { height: props.height } : {}}

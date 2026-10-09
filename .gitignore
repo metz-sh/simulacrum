@@ -25,3 +25,6 @@ dist-ssr
 *.sw?
 
 .gocar.json
+
+# Local debug sessions and evidence
+.simulacrum-dev/

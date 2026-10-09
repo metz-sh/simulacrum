@@ -8,6 +8,7 @@ import { useHost } from '../../state-managers/host/host.store';
 export default function (
 	props: {
 		style?: DefaultProps['style'];
+		'aria-label'?: string;
 	} & MantineStyleSystemProps
 ) {
 	const { sendBuildCommand, setBuildAsErrored, build } = useCodeDaemon((state) => ({

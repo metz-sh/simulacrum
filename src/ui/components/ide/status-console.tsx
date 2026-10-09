@@ -60,7 +60,7 @@ function ReBuildWarning(props: {
 					}}
 				>
 					You have made some changes to the code since your last visit. Press{' '}
-					<BuildButton ml={'6px'} mr={'6px'} /> to see them.
+					<BuildButton aria-label="Rebuild project" ml={'6px'} mr={'6px'} /> to see them.
 				</Text>
 			</Paper>
 		</div>
